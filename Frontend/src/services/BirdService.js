@@ -32,7 +32,15 @@ export const identifyBird = async (imageFile, userId = null) => {
             imageUrl: URL.createObjectURL(imageFile), // Use local preview
             image: URL.createObjectURL(imageFile),   // Compatibility
             identifiedAt: new Date().toISOString(),
-            details: details
+            details: details,
+            wingspan: response.data.wingspan,
+            lifespan: response.data.lifespan,
+            conservationStatus: response.data.conservationStatus,
+            diet: response.data.diet,
+            funFact: response.data.funFact,
+            migrationStatus: response.data.migrationStatus,
+            breedingSeason: response.data.breedingSeason,
+            hotspots: response.data.hotspots
         };
     } catch (error) {
         console.error('Error identifying bird:', error);
@@ -77,9 +85,19 @@ export const getHistory = async (userId, params = {}) => {
                 commonName: item.bird_name,
                 scientificName: item.scientific_name,
                 confidence: item.confidence,
-                image: item.image, // In real app, this should be a URL to served image
+                image: item.image ? (item.image.startsWith('http') ? item.image : `${API_URL}${item.image}`) : null,
                 identifiedAt: item.timestamp,
-                details: { scientific_name: item.scientific_name } // Minimal details
+                description: item.description,
+                habitat: item.habitat,
+                details: item.details,
+                wingspan: item.wingspan,
+                lifespan: item.lifespan,
+                conservationStatus: item.conservationStatus,
+                diet: item.diet,
+                funFact: item.funFact,
+                migrationStatus: item.migrationStatus,
+                breedingSeason: item.breedingSeason,
+                hotspots: item.hotspots
             })),
             total: response.data.total,
             pages: response.data.pages,
@@ -108,8 +126,12 @@ export const getBirds = async () => {
     try {
         console.log("Fetching birds from:", `${API_URL}/api/birds`);
         const response = await axios.get(`${API_URL}/api/birds`);
-        console.log("Birds received:", response.data.length);
-        return response.data;
+        return response.data.map(bird => ({
+            ...bird,
+            // Ensure proper image URL mapping
+            image: bird.image ? (bird.image.startsWith('http') ? bird.image : `${API_URL}${bird.image}`) : null,
+            images: bird.images ? bird.images.map(img => img.startsWith('http') ? img : `${API_URL}${img}`) : []
+        }));
     } catch (error) {
         console.error('Error fetching birds:', error);
         return [];

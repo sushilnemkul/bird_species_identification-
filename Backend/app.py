@@ -1,15 +1,18 @@
 import os
+import uuid
 import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+import datetime
 import tensorflow as tf
 import numpy as np
 from PIL import Image
 from dotenv import load_dotenv
 
 from bird_info import get_bird_info
-from models import db, User, BirdSighting, Bird
+from models import db, User, BirdSighting, Bird, BirdImage
 
 # Load environment variables
 env_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -24,8 +27,19 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+# Configure Uploads
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    from flask import send_from_directory
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 # Configure CORS with environment variable support
-allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000').split(',')
+allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175').split(',')
 CORS(app, origins=allowed_origins, supports_credentials=True)
 
 
@@ -154,9 +168,18 @@ def login():
         
         if user and check_password_hash(user.password_hash, data.get('password')):
             logger.info(f"User logged in: {user.email}")
+            
+            # Generate JWT Token (payload must be simple JSON serializable objects)
+            user_data = user.to_dict()
+            token = jwt.encode({
+                'user_id': user.id,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7) # 7 days expiration
+            }, app.config['SECRET_KEY'], algorithm='HS256')
+
             return jsonify({
-                'user': user.to_dict(),
-                'token': 'dummy-jwt-token-for-now' # In prod, use real JWT
+                'user': user_data,
+                'role': user.role,
+                'token': token
             }), 200
         
         logger.warning(f"Failed login attempt for email: {data.get('email')}")
@@ -164,6 +187,32 @@ def login():
     except Exception as e:
         logger.error(f"Login error: {e}", exc_info=True)
         return jsonify({'error': f'Login error: {str(e)}'}), 500
+
+@app.route('/api/auth/verify', methods=['GET'])
+def verify_token():
+    """Verify JWT token and return user data."""
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({'error': 'Missing or invalid token'}), 401
+    
+    try:
+        token = auth_header.split(' ')[1]
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        user = db.session.get(User, data['user_id'])
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        return jsonify({
+            'user': user.to_dict(),
+            'role': user.role
+        }), 200
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'Token expired'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
+    except Exception as e:
+        logger.error(f"Token verification error: {e}")
+        return jsonify({'error': 'Token verification failed'}), 500
  
 @app.route('/api/history', methods=['GET'])
 def get_history():
@@ -196,8 +245,28 @@ def get_history():
             page=page, per_page=per_page, error_out=False
         )
         
+        # Enrich results with bird details
+        enriched_items = []
+        for s in pagination.items:
+            item_dict = s.to_dict()
+            # Get detailed info for this bird
+            bird_info = get_bird_info(s.bird_name)
+            item_dict['details'] = bird_info
+            # For backward compatibility and convenience
+            item_dict['description'] = bird_info.get('description')
+            item_dict['habitat'] = bird_info.get('habitat')
+            item_dict['wingspan'] = bird_info.get('wingspan')
+            item_dict['lifespan'] = bird_info.get('lifespan')
+            item_dict['conservationStatus'] = bird_info.get('conservation_status')
+            item_dict['diet'] = bird_info.get('diet')
+            item_dict['funFact'] = bird_info.get('fun_fact')
+            item_dict['migrationStatus'] = bird_info.get('migration_status')
+            item_dict['breedingSeason'] = bird_info.get('breeding_season')
+            item_dict['hotspots'] = bird_info.get('nepal_hotspots')
+            enriched_items.append(item_dict)
+        
         return jsonify({
-            'items': [s.to_dict() for s in pagination.items],
+            'items': enriched_items,
             'total': pagination.total,
             'pages': pagination.pages,
             'current_page': pagination.page,
@@ -327,17 +396,35 @@ def seed_birds():
             return jsonify({'error': 'No bird data provided'}), 400
         
         for bird_data in data['birds']:
-            # Check if bird already exists
-            if not Bird.query.filter_by(common_name=bird_data['commonName']).first():
+            bird = Bird.query.filter_by(common_name=bird_data['common_name'] if 'common_name' in bird_data else bird_data['commonName']).first()
+            if not bird:
                 bird = Bird(
                     common_name=bird_data['commonName'],
                     scientific_name=bird_data['scientificName'],
                     description=bird_data['description'],
                     habitat=bird_data['habitat'],
                     rarity=bird_data['rarity'],
-                    image_url=bird_data['image']
+                    image_url=bird_data['image'],
+                    # New fields
+                    wingspan=bird_data.get('wingspan'),
+                    lifespan=bird_data.get('lifespan'),
+                    conservation_status=bird_data.get('conservationStatus'),
+                    diet=bird_data.get('diet'),
+                    fun_fact=bird_data.get('funFact'),
+                    migration_status=bird_data.get('migrationStatus'),
+                    breeding_season=bird_data.get('breedingSeason'),
+                    hotspots=bird_data.get('hotspots')
                 )
                 db.session.add(bird)
+                db.session.flush() # Flush to get bird.id
+
+            # Add additional images if provided (even if bird exists)
+            if 'images' in bird_data and isinstance(bird_data['images'], list):
+                # Clear existing gallery images for this bird to avoid duplicates
+                BirdImage.query.filter_by(bird_id=bird.id).delete()
+                for img_url in bird_data['images']:
+                    bird_image = BirdImage(bird_id=bird.id, image_url=img_url)
+                    db.session.add(bird_image)
         
         db.session.commit()
         return jsonify({'message': 'Birds seeded successfully'}), 201
@@ -413,24 +500,49 @@ def predict():
         if confidence < 0.3:
             logger.warning(f"Low confidence prediction: {confidence:.2%} - Model may be uncertain")
 
-        # Get bird info
-        bird_details = get_bird_info(predicted_class)
+        # Get bird info from DB first, fall back to file
+        bird_details = {}
+        db_bird = Bird.query.filter_by(common_name=predicted_class).first()
+        if db_bird:
+            bird_details = db_bird.to_dict()
+            # Normalize keys to match what frontend expects from get_bird_info
+            bird_details['scientific_name'] = db_bird.scientific_name
+            bird_details['conservation_status'] = db_bird.conservation_status
+            bird_details['migraton_status'] = db_bird.migration_status
+            bird_details['breeding_season'] = db_bird.breeding_season
+            bird_details['nepal_hotspots'] = db_bird.hotspots
+            bird_details['fun_fact'] = db_bird.fun_fact
+        else:
+            # Fallback to static file if not in DB
+            bird_details = get_bird_info(predicted_class)
 
         # Save to DB if user_id is provided
         user_id_raw = request.form.get('user_id')
         if user_id_raw:
             try:
                 user_id = int(user_id_raw)
+                
+                # Generate unique filename for the image
+                filename = f"{uuid.uuid4()}{file_ext}"
+                save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                
+                # Reset file stream position and save the original file
+                file.seek(0)
+                file.save(save_path)
+                
+                # Store the relative URL path in the DB
+                image_url_path = f"/uploads/{filename}"
+                
                 sighting = BirdSighting(
                     user_id=user_id,
                     bird_name=predicted_class,
                     scientific_name=bird_details.get('scientific_name'),
                     confidence=confidence,
-                    image_path=file.filename # Simplified for now
+                    image_path=image_url_path
                 )
                 db.session.add(sighting)
                 db.session.commit()
-                logger.info(f"Sighting saved for user {user_id}")
+                logger.info(f"Sighting saved for user {user_id} with image {filename}")
             except Exception as db_error:
                 logger.error(f"Error saving sighting: {db_error}")
                 db.session.rollback()
@@ -446,6 +558,18 @@ def predict():
         
         if confidence < 0.75:
             result["warning"] = "Not confident — try a clearer image"
+        
+        # Enrich result with full info for the identified bird
+        result.update({
+            "wingspan": bird_details.get('wingspan'),
+            "lifespan": bird_details.get('lifespan'),
+            "conservationStatus": bird_details.get('conservation_status'),
+            "diet": bird_details.get('diet'),
+            "funFact": bird_details.get('fun_fact'),
+            "migrationStatus": bird_details.get('migration_status'),
+            "breedingSeason": bird_details.get('breeding_season'),
+            "hotspots": bird_details.get('nepal_hotspots')
+        })
         
         return jsonify(result), 200
 
@@ -476,6 +600,198 @@ def predict():
             "error": error_msg,
             "details": str(e) if os.getenv('FLASK_DEBUG', 'False').lower() == 'true' else None
         }), 500
+
+
+# --- Admin API Routes ---
+
+@app.route('/api/admin/birds', methods=['POST'])
+def create_bird():
+    """Create a new bird."""
+    try:
+        data = request.get_json()
+        if not data.get('commonName'):
+            return jsonify({'error': 'Common name is required'}), 400
+            
+        if Bird.query.filter_by(common_name=data['commonName']).first():
+            return jsonify({'error': 'Bird with this name already exists'}), 400
+
+        bird = Bird(
+            common_name=data['commonName'],
+            scientific_name=data.get('scientificName'),
+            description=data.get('description'),
+            habitat=data.get('habitat'),
+            rarity=data.get('rarity'),
+            image_url=data.get('image'),
+            wingspan=data.get('wingspan'),
+            lifespan=data.get('lifespan'),
+            conservation_status=data.get('conservationStatus'),
+            diet=data.get('diet'),
+            fun_fact=data.get('funFact'),
+            migration_status=data.get('migrationStatus'),
+            breeding_season=data.get('breedingSeason'),
+            hotspots=data.get('hotspots')
+        )
+        db.session.add(bird)
+        db.session.flush() # Flush to assign ID
+        
+        # Handle multiple images
+        if 'images' in data and isinstance(data['images'], list):
+            for img_url in data['images']:
+                if img_url: # Only add if not empty
+                    bird_image = BirdImage(bird_id=bird.id, image_url=img_url)
+                    db.session.add(bird_image)
+                    
+        db.session.commit()
+        return jsonify({'message': 'Bird created successfully', 'bird': bird.to_dict()}), 201
+    except Exception as e:
+        logger.error(f"Error creating bird: {e}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/birds/<int:id>', methods=['PUT'])
+def update_bird(id):
+    """Update an existing bird."""
+    try:
+        bird = db.session.get(Bird, id)
+        if not bird:
+            return jsonify({'error': 'Bird not found'}), 404
+            
+        data = request.get_json()
+        
+        # Update fields
+        if 'commonName' in data: bird.common_name = data['commonName']
+        if 'scientificName' in data: bird.scientific_name = data['scientificName']
+        if 'description' in data: bird.description = data['description']
+        if 'habitat' in data: bird.habitat = data['habitat']
+        if 'rarity' in data: bird.rarity = data['rarity']
+        if 'image' in data: bird.image_url = data['image']
+        if 'wingspan' in data: bird.wingspan = data['wingspan']
+        if 'lifespan' in data: bird.lifespan = data['lifespan']
+        if 'conservationStatus' in data: bird.conservation_status = data['conservationStatus']
+        if 'diet' in data: bird.diet = data['diet']
+        if 'funFact' in data: bird.fun_fact = data['funFact']
+        if 'migrationStatus' in data: bird.migration_status = data['migrationStatus']
+        if 'breedingSeason' in data: bird.breeding_season = data['breedingSeason']
+        if 'hotspots' in data: bird.hotspots = data['hotspots']
+        
+        # Update Images
+        if 'images' in data and isinstance(data['images'], list):
+            # Remove existing images
+            BirdImage.query.filter_by(bird_id=bird.id).delete()
+            
+            # Add new images
+            for img_url in data['images']:
+                if img_url:
+                    bird_image = BirdImage(bird_id=bird.id, image_url=img_url)
+                    db.session.add(bird_image)
+        
+        db.session.commit()
+        return jsonify({'message': 'Bird updated successfully', 'bird': bird.to_dict()}), 200
+    except Exception as e:
+        logger.error(f"Error updating bird: {e}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/birds/<int:id>', methods=['DELETE'])
+def delete_bird(id):
+    """Delete a bird."""
+    try:
+        bird = db.session.get(Bird, id)
+        if not bird:
+            return jsonify({'error': 'Bird not found'}), 404
+            
+        db.session.delete(bird)
+        db.session.commit()
+        return jsonify({'message': 'Bird deleted successfully'}), 200
+    except Exception as e:
+        logger.error(f"Error deleting bird: {e}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/upload', methods=['POST'])
+def admin_upload_image():
+    """Upload an image for a bird (admin function)."""
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file provided'}), 400
+        
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+        
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
+        return jsonify({'error': 'Invalid file type'}), 400
+        
+    try:
+        filename = f"bird_{uuid.uuid4()}{ext}"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        url = f"/uploads/{filename}"
+        return jsonify({'url': url}), 201
+    except Exception as e:
+        logger.error(f"Error uploading admin image: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/users', methods=['GET'])
+def get_all_users():
+    """Get all registered users (admin only)."""
+    try:
+        users = User.query.order_by(User.created_at.desc()).all()
+        return jsonify([user.to_dict() for user in users]), 200
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
+        return jsonify({'error': 'Failed to fetch users'}), 500
+
+@app.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    """Delete a user account."""
+    try:
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        # Optional: Prevent deleting self if needed, assuming auth context is available
+        # if current_user.id == user_id:
+        #     return jsonify({'error': 'Cannot delete your own account'}), 400
+
+        # Delete related sightings first (cascade should handle this if configured, but explicit is safer without cascade)
+        BirdSighting.query.filter_by(user_id=user_id).delete()
+        
+        db.session.delete(user)
+        db.session.commit()
+        logger.info(f"User {user_id} deleted by admin")
+        return jsonify({'message': 'User deleted successfully'}), 200
+    except Exception as e:
+        logger.error(f"Error deleting user: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to delete user'}), 500
+
+@app.route('/api/admin/analytics', methods=['GET'])
+def get_analytics():
+    """Get dashboard analytics data."""
+    try:
+        total_users = User.query.count()
+        total_birds = Bird.query.count()
+        total_sightings = BirdSighting.query.count()
+        
+        # Get recent sightings
+        recent_sightings = BirdSighting.query.order_by(BirdSighting.timestamp.desc()).limit(5).all()
+        recent_sightings_data = []
+        for s in recent_sightings:
+            s_dict = s.to_dict()
+            user = db.session.get(User, s.user_id)
+            if user:
+                s_dict['username'] = user.username
+            recent_sightings_data.append(s_dict)
+
+        return jsonify({
+            'totalUsers': total_users,
+            'totalBirds': total_birds,
+            'totalSightings': total_sightings,
+            'recentSightings': recent_sightings_data
+        }), 200
+    except Exception as e:
+        logger.error(f"Error fetching analytics: {e}")
+        return jsonify({'error': 'Failed to fetch analytics'}), 500
 
 
 if __name__ == '__main__':

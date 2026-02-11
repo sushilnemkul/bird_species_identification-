@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user on mount
+  // Load user on mount (verifies token with backend)
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
         setUser(currentUser);
       } catch (error) {
         console.error("Failed to load user", error);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const { user } = await loginService(email, password);
       setUser(user);
-      return { success: true };
+      return { success: true, role: user.role };
     } catch (error) {
       return { success: false, error: error.message };
     }

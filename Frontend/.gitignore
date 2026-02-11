@@ -28,4 +28,4 @@ __pycache__/
 .env
 *.h5
 *.keras
-datasets/
+dataset/

@@ -4,72 +4,158 @@ Stores details for each bird species in the dataset.
 """
 
 BIRD_INFO = {
-    "Common Kingfisher": {
-        "description": "The Common Kingfisher (Alcedo atthis) is a small kingfisher with seven subspecies recognized within its wide distribution across Eurasia and North Africa. It is resident in much of its range, but migrates from areas where rivers freeze in winter.",
-        "habitat": "Rivers, canals, lakes, and ponds.",
-        "diet": "Mainly fish, but also aquatic insects and crustaceans.",
-        "scientific_name": "Alcedo atthis"
+    "Himalayan Monal": {
+        "description": "National bird of Nepal. Famous for its iridescent rainbow plumage. Found in high-altitude oak and rhododendron forests.",
+        "habitat": "High Altitude Oak and Rhododendron Forests",
+        "diet": "Tender leaves, shoots, nuts, and insects",
+        "scientific_name": "Lophophorus impejanus",
+        "wingspan": "29-32 cm",
+        "lifespan": "10-12 years",
+        "conservation_status": "Near Threatened (Nepal)",
+        "fun_fact": "The male has a magnificent crest and can display up to nine different colors on its feathers.",
+        "migration_status": "Altitudinal Migrant",
+        "breeding_season": "April to August",
+        "nepal_hotspots": "Langtang National Park, Sagarmatha National Park"
     },
-    "Common Myna": {
-        "description": "The Common Myna (Acridotheres tristis), sometimes spelled Mynah, is a member of the family Sturnidae (starlings) native to Asia. An omnivorous open woodland bird with a strong territorial instinct, the Common Myna has adapted extremely well to urban environments.",
-        "habitat": "Urban areas, farmlands, and open country.",
-        "diet": "Insects, crustaceans, arachnids, reptiles, small mammals, seeds, grain and fruits and discarded waste from human habitation.",
-        "scientific_name": "Acridotheres tristis"
+    "Spiny Babbler": {
+        "description": "The only bird species endemic to Nepal. Found only in the mid-hills scrublands.",
+        "habitat": "Scrublands and dense secondary forests",
+        "diet": "Insects, seeds, and small lizards",
+        "scientific_name": "Turdoides nipalensis",
+        "wingspan": "20-25 cm",
+        "lifespan": "5-10 years",
+        "conservation_status": "Vulnerable (National)",
+        "fun_fact": "It was thought to be extinct for nearly 100 years until it was rediscovered in 1948.",
+        "migration_status": "Resident",
+        "breeding_season": "April to June",
+        "nepal_hotspots": "Kathmandu Valley (Shivapuri), Phulchowki"
     },
-    "House Crow": {
-        "description": "The House Crow (Corvus splendens), also known as the Indian, Greynecked, Ceylon or Colombo crow, is a common bird of the crow family that is of Asian origin but now found in many parts of the world.",
-        "habitat": "Closely associated with human habitation, cities, and towns.",
-        "diet": "Omnivorous; eats refuse, small reptiles, insects, invertebrates, eggs, nestlings, grain and fruits.",
-        "scientific_name": "Corvus splendens"
+    "Great Hornbill": {
+        "description": "Large, impressive forest bird with a massive yellow and black bill. Found in lowland forests.",
+        "habitat": "Old-growth broadleaf forests",
+        "diet": "Mainly figs, fruit, and small vertebrates",
+        "scientific_name": "Buceros bicornis",
+        "wingspan": "151-178 cm",
+        "lifespan": "35-50 years",
+        "conservation_status": "Vulnerable (Global)",
+        "fun_fact": "The female seals herself inside a tree cavity for months during nesting, fed by the male through a small slit.",
+        "migration_status": "Resident",
+        "breeding_season": "February to May",
+        "nepal_hotspots": "Chitwan National Park, Bardia National Park"
     },
-    "Common Tailorbird": {
-        "description": "The Common Tailorbird (Orthotomus sutorius) is a songbird found across tropical Asia. It is famous for its nest made of leaves 'sewn' together and is a common resident in urban gardens.",
-        "habitat": "Deciduous forests, scrublands, mangroves, open woodlands, and gardens.",
-        "diet": "Insects (beetles, bugs) and nectar from flowers.",
-        "scientific_name": "Orthotomus sutorius"
-    },
-    "Coppersmith Barbet": {
-        "description": "The Coppersmith Barbet (Psilopogon haemacephalus), also called the crimson-breasted barbet, is a bird with a distinct metronomic call that sounds like a coppersmith striking metal.",
-        "habitat": "Gardens, groves, and sparse woodlands.",
-        "diet": "Frugivorous (figs, berries, drupes) and occasionally insects.",
-        "scientific_name": "Psilopogon haemacephalus"
-    },
-    "White-Breasted Kingfisher": {
-        "description": "The White-Breasted Kingfisher (Halcyon smyrnensis) is a tree kingfisher widely distributed in Asia. It has a bright blue back, chestnut head and belly, and a white throat and breast.",
-        "habitat": "Open country with trees, wires, or other perches; often found away from water.",
-        "diet": "Large crustaceans, insects, earthworms, rodents, snakes, frogs, and fish.",
-        "scientific_name": "Halcyon smyrnensis"
+    "Sarus Crane": {
+        "description": "The world's tallest flying bird, symbolized as a token of eternal love.",
+        "habitat": "Wetlands and agricultural fields",
+        "diet": "Small vertebrates, insects, and grains",
+        "scientific_name": "Antigone antigone",
+        "wingspan": "220-280 cm",
+        "lifespan": "Up to 40 years",
+        "conservation_status": "Vulnerable",
+        "fun_fact": "They are known for their spectacular dancing displays and loud trumpeting calls.",
+        "migration_status": "Resident / Local Migrant",
+        "breeding_season": "June to September",
+        "nepal_hotspots": "Lumbini, Kapilvastu, Rupandehi"
     },
     "Asian Green Bee-Eater": {
-        "description": "The Asian Green Bee-Eater (Merops orientalis) is a near passerine bird in the bee-eater family. It is resident but prone to seasonal movements and is found widely distributed across sub-Saharan Africa from Senegal and the Gambia to Ethiopia, the Nile valley, western Arabia and Asia through India to Vietnam.",
-        "habitat": "Open country with bushes, shrubs and small trees, farmlands and gardens.",
+        "description": "The Asian Green Bee-Eater is a striking green bird with a long, thin tail. It catches bees and wasps mid-air.",
+        "habitat": "Open country with bushes, shrubs and gardens.",
         "diet": "Mainly bees, wasps and other flying insects.",
-        "scientific_name": "Merops orientalis"
+        "scientific_name": "Merops orientalis",
+        "wingspan": "29-49 cm",
+        "lifespan": "12-18 years",
+        "conservation_status": "Least Concern",
+        "fun_fact": "They remove the sting of bees by rubbing the insect against a branch before eating.",
+        "migration_status": "Resident",
+        "breeding_season": "March to June",
+        "nepal_hotspots": "Chitwan National Park, Terai lowlands"
     },
-    "Hoopoe": {
-        "description": "The Hoopoe (Upupa epops) is a colourful bird found across Afro-Eurasia, notable for its distinctive 'crown' of feathers. It is the only extant member of the family Upupidae.",
-        "habitat": "Open woodlands, orchards, and cultivated land.",
-        "diet": "Insects, small reptiles, and frogs.",
-        "scientific_name": "Upupa epops"
+    "Common Kingfisher": {
+        "description": "Vibrant blue and orange bird, a master of aquatic hunting. Indicator of healthy waters.",
+        "habitat": "Rivers, canals, lakes, and ponds.",
+        "diet": "Mainly fish and aquatic insects.",
+        "scientific_name": "Alcedo atthis",
+        "wingspan": "Around 25 cm",
+        "lifespan": "2-7 years",
+        "conservation_status": "Least Concern",
+        "fun_fact": "A kingfisher can dive into water at speeds of up to 40 km/h using its third eyelid as an underwater lens.",
+        "migration_status": "Resident",
+        "breeding_season": "June to October",
+        "nepal_hotspots": "Bishnumati River, Taudaha Lake, Kosi Tappu"
     },
-    "Jungle Babbler": {
-        "description": "The Jungle Babbler (Turdoides striata) is a member of the family Leiothrichidae found in the Indian subcontinent. They are gregarious birds that forage in small groups of six to ten birds, a habit that has given them the popular name of 'Seven Sisters'.",
-        "habitat": "Forests, scrublands, and gardens.",
-        "diet": "Insects, spiders, small lizards, and berries.",
-        "scientific_name": "Turdoides striata"
+    "Common Myna": {
+        "description": "Familiar brown bird with a black head and bright yellow eye patches. Highly social and adaptable.",
+        "habitat": "Urban areas, farmlands, and gardens.",
+        "diet": "Omnivorous; insects, fruits, and seeds.",
+        "scientific_name": "Acridotheres tristis",
+        "wingspan": "12-14 cm",
+        "lifespan": "4-12 years",
+        "conservation_status": "Least Concern",
+        "fun_fact": "They are known as the 'farmer's friend' because they eat grasshoppers and other crop pests.",
+        "migration_status": "Resident",
+        "breeding_season": "March to September",
+        "nepal_hotspots": "Kathmandu Valley, Pokhara, Terai towns"
     },
-    "Rufous Treepie": {
-        "description": "The Rufous Treepie (Dendrocitta vagabunda) is a member of the crow family, Corvidae. It is native to the Indian Subcontinent and adjoining parts of Southeast Asia. It is long-tailed and has loud musical calls.",
-        "habitat": "Open forest, gardens, and urban areas.",
-        "diet": "Omnivorous; fruits, seeds, insects, small reptiles, and birds' eggs.",
-        "scientific_name": "Dendrocitta vagabunda"
-    }
+    "House Crow": {
+        "description": "Highly intelligent grey-necked crow always found near human habitation.",
+        "habitat": "Cities, towns, and villages.",
+        "diet": "Omnivorous scavenger.",
+        "scientific_name": "Corvus splendens",
+        "wingspan": "40 cm",
+        "lifespan": "7-15 years",
+        "conservation_status": "Least Concern",
+        "fun_fact": "They can recognize individual human faces and remember past interactions with them.",
+        "migration_status": "Resident",
+        "breeding_season": "April to July",
+        "nepal_hotspots": "Widespread across all urban centers in Nepal"
+    },
+    "Red-vented Bulbul": {
+        "description": "Noisy, common bird with a black crest and a red patch under the tail. Found across most of Nepal.",
+        "habitat": "Gardens, scrub, and forest edges.",
+        "diet": "Fruits, nectar, and insects.",
+        "scientific_name": "Pycnonotus cafer",
+        "wingspan": "25-28 cm",
+        "lifespan": "8-10 years",
+        "conservation_status": "Least Concern",
+        "fun_fact": "They are highly social and often found in pairs or small noisy groups.",
+        "migration_status": "Resident",
+        "breeding_season": "April to September",
+        "nepal_hotspots": "Kathmandu, Villages, Terai gardens"
+    },
+    "White-Breasted Kingfisher": {
+        "description": "Bold bird with a bright blue back and white breast. Often hunts far away from water bodies.",
+        "habitat": "Agricultural land, garden edges, and wetlands.",
+        "diet": "Large insects, rodents, snakes, and frogs.",
+        "scientific_name": "Halcyon smyrnensis",
+        "wingspan": "11-13 cm",
+        "lifespan": "11 years",
+        "conservation_status": "Least Concern",
+        "fun_fact": "Unlike most kingfishers, they often hunt far away from water for rodents and frogs.",
+        "migration_status": "Resident",
+        "breeding_season": "January to August",
+        "nepal_hotspots": "Koshi Tappu, Pokhara Valley, Terai wetlands"
+    },
 }
 
 def get_bird_info(bird_name):
-    return BIRD_INFO.get(bird_name, {
+    # Try exact match first
+    info = BIRD_INFO.get(bird_name)
+    if info:
+        return info
+    
+    # Try common alias (e.g., White-throated Kingfisher vs White-Breasted)
+    if bird_name == "White-throated Kingfisher":
+        return BIRD_INFO.get("White-Breasted Kingfisher")
+        
+    return {
         "description": "Information not available for this species.",
         "habitat": "Unknown",
         "diet": "Unknown",
-        "scientific_name": "Unknown"
-    })
+        "scientific_name": "Unknown",
+        "wingspan": "Unknown",
+        "lifespan": "Unknown",
+        "conservation_status": "Unknown",
+        "fun_fact": "No fun facts recorded yet for this species.",
+        "migration_status": "Unknown",
+        "breeding_season": "Unknown",
+        "nepal_hotspots": "Unknown"
+    }

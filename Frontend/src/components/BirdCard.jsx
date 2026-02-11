@@ -9,7 +9,7 @@ const BirdCard = ({ bird, showConfidence = false, timestamp = null, onDelete = n
     <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition hover:scale-105 hover:shadow-xl duration-300 group">
       <div className="relative h-48 w-full">
         <img 
-          src={bird.imageUrl || bird.image} 
+          src={bird.imageUrl || bird.image || 'https://via.placeholder.com/400x300?text=No+Image+Available'} 
           alt={bird.commonName} 
           className="w-full h-full object-cover"
         />

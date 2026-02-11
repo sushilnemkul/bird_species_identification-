@@ -1,167 +1,332 @@
 import requests
 import json
 
+# Comprehensive data for 20 Iconic Nepal Bird Species
 data = {
     "birds": [
         {
             "commonName": "Himalayan Monal",
             "scientificName": "Lophophorus impejanus",
-            "description": "The national bird of Nepal, known for its stunning iridescent plumage. Found in high-altitude oak and rhododendron forests.",
+            "description": "National bird of Nepal. Famous for its iridescent rainbow plumage.",
+            "habitat": "High Altitude Oak and Rhododendron Forests",
             "rarity": "Rare",
-            "habitat": "High Altitude Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Himalayan_Monal_Lal_Durga_Prasad.jpg/640px-Himalayan_Monal_Lal_Durga_Prasad.jpg"
+            "image": "../frontend/public/himalayan_monal.jpg",
+            "wingspan": "29-32 cm",
+            "lifespan": "10-12 years",
+            "conservationStatus": "Near Threatened (Nepal)",
+            "diet": "Tender leaves, shoots, nuts, and insects",
+            "funFact": "The male has a magnificent crest and can display up to nine different colors on its feathers.",
+            "migrationStatus": "Altitudinal Migrant",
+            "breedingSeason": "April to August",
+            "hotspots": "Langtang National Park, Sagarmatha National Park",
+            "images": [
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Himalayan_Monal_at_Tungnath.jpg/640px-Himalayan_Monal_at_Tungnath.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Lophophorus_impejanus_%28Monal%29.jpg/640px-Lophophorus_impejanus_%28Monal%29.jpg"
+            ]
         },
         {
             "commonName": "Spiny Babbler",
             "scientificName": "Turdoides nipalensis",
-            "description": "The only bird species found only in Nepal (endemic). It's a shy bird found in scrublands between 800m to 2000m.",
+            "description": "The only bird species endemic to Nepal. Found only in the mid-hills.",
+            "habitat": "Scrublands and dense secondary forests",
             "rarity": "Endemic",
-            "habitat": "Scrubland",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Spiny_Babbler.jpg/640px-Spiny_Babbler.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Spiny_Babbler.jpg/640px-Spiny_Babbler.jpg",
+            "wingspan": "20-25 cm",
+            "lifespan": "5-10 years",
+            "conservationStatus": "Vulnerable (National)",
+            "diet": "Insects, seeds, and small lizards",
+            "funFact": "It was thought to be extinct for nearly 100 years until it was rediscovered in 1948.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "April to June",
+            "hotspots": "Kathmandu Valley (Shivapuri), Phulchowki"
         },
         {
             "commonName": "Great Hornbill",
             "scientificName": "Buceros bicornis",
-            "description": "A large, impressive bird with a massive yellow and black bill and casque. Found in low-land forests of the Terai.",
-            "rarity": "Rare",
-            "habitat": "Subtropical Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Great_Hornbill_-_Thailand.jpg/640px-Great_Hornbill_-_Thailand.jpg"
-        },
-        {
-            "commonName": "Cheer Pheasant",
-            "scientificName": "Catreus wallichii",
-            "description": "A shy, brownish pheasant with a long tail and a red face patch. Found in steep grassy slopes and cliffs.",
-            "rarity": "Rare",
-            "habitat": "Grassy Slopes",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Cheer_Pheasant_Lophophorus.jpg/640px-Cheer_Pheasant_Lophophorus.jpg"
-        },
-        {
-            "commonName": "Satyr Tragopan",
-            "scientificName": "Tragopan satyra",
-            "description": "A beautiful forest pheasant. The male is bright red with white spots and horns that it displays during courtship.",
-            "rarity": "Rare",
-            "habitat": "Moist Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Tragopan_satyra_male_1.jpg/640px-Tragopan_satyra_male_1.jpg"
+            "description": "Large, impressive forest bird with a massive yellow and black bill.",
+            "habitat": "Old-growth broadleaf forests",
+            "rarity": "Endangered (Nepal)",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Great_Hornbill_-_Thailand.jpg/640px-Great_Hornbill_-_Thailand.jpg",
+            "wingspan": "151-178 cm",
+            "lifespan": "35-50 years",
+            "conservationStatus": "Vulnerable (Global)",
+            "diet": "Mainly figs, fruit, and small vertebrates",
+            "funFact": "The female seals herself inside a tree cavity for months during nesting, fed by the male through a small slit.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "February to May",
+            "hotspots": "Chitwan National Park, Bardia National Park"
         },
         {
             "commonName": "Sarus Crane",
             "scientificName": "Antigone antigone",
-            "description": "The world's tallest flying bird. Distinctive red head and upper neck. Found in wetlands and agricultural fields of the Terai.",
+            "description": "The world's tallest flying bird, symbolized as a token of eternal love.",
+            "habitat": "Wetlands and agricultural fields",
+            "rarity": "Vulnerable",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Grus_antigone_L_K_Giri.jpg/640px-Grus_antigone_L_K_Giri.jpg",
+            "wingspan": "220-280 cm",
+            "lifespan": "Up to 40 years",
+            "conservationStatus": "Vulnerable",
+            "diet": "Small vertebrates, insects, and grains",
+            "funFact": "They are known for their spectacular dancing displays and loud trumpeting calls.",
+            "migrationStatus": "Resident / Local Migrant",
+            "breedingSeason": "June to September",
+            "hotspots": "Lumbini, Kapilvastu, Rupandehi"
+        },
+        {
+            "commonName": "Satyr Tragopan",
+            "scientificName": "Tragopan satyra",
+            "description": "Beautiful forest pheasant. Males have blue horns and a bib-like lappet.",
+            "habitat": "Moist Oak and Rhododendron forest with bamboo",
             "rarity": "Rare",
-            "habitat": "Wetlands",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Grus_antigone_L_K_Giri.jpg/640px-Grus_antigone_L_K_Giri.jpg"
-        },
-        {
-            "commonName": "White-throated Kingfisher",
-            "scientificName": "Halcyon smyrnensis",
-            "description": "A bright blue bird with a chocolate-brown head and a white throat. Often seen perched on wires and branches away from water.",
-            "rarity": "Common",
-            "habitat": "Open Country",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/White-throated_Kingfisher_Halcyon_smyrnensis.jpg/640px-White-throated_Kingfisher_Halcyon_smyrnensis.jpg"
-        },
-        {
-            "commonName": "Common Myna",
-            "scientificName": "Acridotheres tristis",
-            "description": "A very familiar urban bird. It's brown with a black head and bright yellow around the eyes and leg.",
-            "rarity": "Very Common",
-            "habitat": "Urban / Farms",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Common_Myna_%28Acridotheres_tristis%29.jpg/640px-Common_Myna_%28Acridotheres_tristis%29.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Tragopan_satyra_male_1.jpg/640px-Tragopan_satyra_male_1.jpg",
+            "wingspan": "70 cm (Length)",
+            "lifespan": "8-15 years",
+            "conservationStatus": "Near Threatened",
+            "diet": "Insects, bamboo shoots, and berries",
+            "funFact": "The male inflates two bright blue fleshy horns on its head during its courtship dance.",
+            "migrationStatus": "Altitudinal Migrant",
+            "breedingSeason": "March to June",
+            "hotspots": "Annapurna Conservation Area, Langtang"
         },
         {
             "commonName": "Blue Whistling Thrush",
             "scientificName": "Myophonus caeruleus",
-            "description": "A dark blue bird found near rocky streams. It has a beautiful whistling song, often heard at dawn and dusk.",
+            "description": "Dark blue bird found near mountain streams, known for its beautiful song.",
+            "habitat": "Rocky mountain streams and humid forests",
             "rarity": "Common",
-            "habitat": "Mountain Streams",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Blue_Whistling_Thrush_Myophonus_caeruleus.jpg/640px-Blue_Whistling_Thrush_Myophonus_caeruleus.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Blue_Whistling_Thrush_Myophonus_caeruleus.jpg/640px-Blue_Whistling_Thrush_Myophonus_caeruleus.jpg",
+            "wingspan": "40-45 cm",
+            "lifespan": "6-10 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Earthworms, snails, and aquatic insects",
+            "funFact": "They often batter snails against rocks to break the shells before eating.",
+            "migrationStatus": "Altitudinal Migrant",
+            "breedingSeason": "April to August",
+            "hotspots": "Kathmandu Valley, Pokhara, Mountain treks"
         },
         {
             "commonName": "Himalayan Griffon",
             "scientificName": "Gyps himalayensis",
-            "description": "A massive vulture found in the Himalayas. Often seen soaring in large groups over mountains.",
-            "rarity": "Common",
-            "habitat": "High Mountains",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Himalayan_Griffon_Vulture_Gyps_himalayensis.jpg/640px-Himalayan_Griffon_Vulture_Gyps_himalayensis.jpg"
+            "description": "Massive vulture of the Himalayas, essential for the ecosystem.",
+            "habitat": "High mountains and cliffs",
+            "rarity": "Near Threatened",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Himalayan_Griffon_Vulture_Gyps_himalayensis.jpg/640px-Himalayan_Griffon_Vulture_Gyps_himalayensis.jpg",
+            "wingspan": "260-290 cm",
+            "lifespan": "20-30 years",
+            "conservationStatus": "Near Threatened",
+            "diet": "Carrion (Carcasses)",
+            "funFact": "They can soar to altitude of over 8,000 meters using thermal updrafts.",
+            "migrationStatus": "Altitudinal Migrant",
+            "breedingSeason": "January to June",
+            "hotspots": "Upper Mustang, Annapurna Region"
         },
         {
             "commonName": "Steppe Eagle",
             "scientificName": "Aquila nipalensis",
-            "description": "A large bird of prey that migrates through Nepal in large numbers, especially across the Kali Gandaki valley.",
-            "rarity": "Common",
-            "habitat": "High Pass / Hills",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Steppe_Eagle_Aquila_nipalensis.jpg/640px-Steppe_Eagle_Aquila_nipalensis.jpg"
-        },
-        {
-            "commonName": "Red-vented Bulbul",
-            "scientificName": "Pycnonotus cafer",
-            "description": "A noisy, common garden bird with a black crest and a red patch under the tail. Found across most of Nepal.",
-            "rarity": "Very Common",
-            "habitat": "Gardens / Scrub",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Red-vented_Bulbul_Pycnonotus_cafer.jpg/640px-Red-vented_Bulbul_Pycnonotus_cafer.jpg"
-        },
-        {
-            "commonName": "House Crow",
-            "scientificName": "Corvus splendens",
-            "description": "The ubiquitous urban bird of Nepal, found in almost every town and city. Highly intelligent and adaptable.",
-            "rarity": "Very Common",
-            "habitat": "Urban",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/House_Crow_%28Corvus_splendens%29.jpg/640px-House_Crow_%28Corvus_splendens%29.jpg"
-        },
-        {
-            "commonName": "Oriental Pied Hornbill",
-            "scientificName": "Anthracoceros albirostris",
-            "description": "The smallest of the hornbills in Nepal. Black and white bird with a creamy yellow casque. Found in the Terai.",
-            "rarity": "Uncommon",
-            "habitat": "Lowland Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Oriental_Pied_Hornbill_Anthracoceros_albirostris.jpg/640px-Oriental_Pied_Hornbill_Anthracoceros_albirostris.jpg"
-        },
-        {
-            "commonName": "Spangled Drongo",
-            "scientificName": "Dicrurus hottentottus",
-            "description": "A black bird with iridescent blue 'spangles' and a distinctive curled outer tail feather. Found in mixed forests.",
-            "rarity": "Common",
-            "habitat": "Deciduous Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Hair-crested_Drongo_RWD.jpg/640px-Hair-crested_Drongo_RWD.jpg"
-        },
-        {
-            "commonName": "Great Slatey Woodpecker",
-            "scientificName": "Mulleripicus pulverulentus",
-            "description": "The world's largest woodpecker. It has a slate-grey body and a very long neck. Highly endangered and rare.",
-            "rarity": "Rare",
-            "habitat": "Old Growth Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mulleripicus_pulverulentus.jpg/640px-Mulleripicus_pulverulentus.jpg"
+            "description": "A powerful bird of prey that migrates in thousands through Nepal.",
+            "habitat": "Grasslands, mountains, and open hills",
+            "rarity": "Endangered",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Steppe_Eagle_Aquila_nipalensis.jpg/640px-Steppe_Eagle_Aquila_nipalensis.jpg",
+            "wingspan": "165-215 cm",
+            "lifespan": "17-40 years",
+            "conservationStatus": "Endangered",
+            "diet": "Rodents, small mammals, and carrion",
+            "funFact": "They are unique for often nesting directly on the ground in open terrain.",
+            "migrationStatus": "Migratory",
+            "breedingSeason": "Varies by region",
+            "hotspots": "Khare (Central Nepal), Kali Gandaki Valley"
         },
         {
             "commonName": "Ibisbill",
             "scientificName": "Ibidorhyncha struthersii",
-            "description": "A unique bird with a long down-curved red bill. Found on shingly riverbeds in high altitude mountains.",
+            "description": "Unique river bird with a long down-curved red bill.",
+            "habitat": "Shingly riverbeds in high altitude mountains",
             "rarity": "Rare",
-            "habitat": "Rocky Rivers",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Ibisbill_Ibidorhyncha_struthersii.jpg/640px-Ibisbill_Ibidorhyncha_struthersii.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Ibisbill_Ibidorhyncha_struthersii.jpg/640px-Ibisbill_Ibidorhyncha_struthersii.jpg",
+            "wingspan": "70-80 cm",
+            "lifespan": "8-12 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Aquatic invertebrates and small fish",
+            "funFact": "It is the only member of its own unique bird family, Ibidorhynchidae.",
+            "migrationStatus": "Altitudinal Migrant",
+            "breedingSeason": "April to July",
+            "hotspots": "Kyanguin (Langtang), Trishuli River"
         },
         {
             "commonName": "Blood Pheasant",
             "scientificName": "Ithaginis cruentus",
-            "description": "A high-altitude pheasant. Males are grey and green with bright crimson streaks on the breast and tail.",
+            "description": "High-altitude pheasant with distinctive crimson streaks.",
+            "habitat": "Alpine scrub and coniferous forest",
             "rarity": "Rare",
-            "habitat": "Alpine Scub",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Blood_pheasant.jpg/640px-Blood_pheasant.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Blood_pheasant.jpg/640px-Blood_pheasant.jpg",
+            "wingspan": "45-50 cm (Length)",
+            "lifespan": "8-12 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Mosses, lichens, and berries",
+            "funFact": "Named after the bright red splashes on the male's breast and tail.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "April to June",
+            "hotspots": "Sagarmatha National Park, Gokyo Valley"
+        },
+        {
+            "commonName": "Asian Green Bee-Eater",
+            "scientificName": "Merops orientalis",
+            "description": "Striking green bird that catches bees and wasps in mid-air.",
+            "habitat": "Open country and gardens",
+            "rarity": "Common",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Asian_Green_Bee-eater_%28Merops_orientalis%29_at_Kanha_TR.jpg/640px-Asian_Green_Bee-eater_%28Merops_orientalis%29_at_Kanha_TR.jpg",
+            "wingspan": "29-49 cm",
+            "lifespan": "12-18 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Bees, wasps, and flying insects",
+            "funFact": "They remove the sting of bees by rubbing the insect against a branch.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "March to June",
+            "hotspots": "Chitwan, Terai Lowlands"
+        },
+        {
+            "commonName": "Common Kingfisher",
+            "scientificName": "Alcedo atthis",
+            "description": "Vibrant blue and orange bird, a master of aquatic hunting.",
+            "habitat": "Rivers, lakes, and ponds",
+            "rarity": "Common",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Alcedo_atthis_2.jpg/640px-Alcedo_atthis_2.jpg",
+            "wingspan": "25 cm",
+            "lifespan": "2-7 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Fish and aquatic insects",
+            "funFact": "They can dive at speeds up to 40 km/h to catch prey underwater.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "June to October",
+            "hotspots": "Taudaha Lake, Pokhara Lakes"
+        },
+        {
+            "commonName": "Hoopoe",
+            "scientificName": "Upupa epops",
+            "description": "Spectacular bird with a salmon-pink body and a fan-like crest.",
+            "habitat": "Open woodlands and cultivated land",
+            "rarity": "Uncommon",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Hoopoe_Lushoto.jpg/640px-Hoopoe_Lushoto.jpg",
+            "wingspan": "44-48 cm",
+            "lifespan": "10 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Insects and small reptiles",
+            "funFact": "Hoopoe chicks can defend themselves by squirt foul-smelling liquid at predators.",
+            "migrationStatus": "Partial Resident",
+            "breedingSeason": "May to July",
+            "hotspots": "Lumbini, Phulchowki"
+        },
+        {
+            "commonName": "House Crow",
+            "scientificName": "Corvus splendens",
+            "description": "Highly intelligent grey-necked crow ubiquitous in Nepal.",
+            "habitat": "Urban areas and villages",
+            "rarity": "Very Common",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/House_Crow_%28Corvus_splendens%29.jpg/640px-House_Crow_%28Corvus_splendens%29.jpg",
+            "wingspan": "40 cm",
+            "lifespan": "7-15 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Omnivorous scavenger",
+            "funFact": "They can recognize individual human faces and remember past interactions.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "April to July",
+            "hotspots": "Kathmandu, Pokhara, Urban centers"
+        },
+        {
+            "commonName": "Common Myna",
+            "scientificName": "Acridotheres tristis",
+            "description": "Familiar brown bird with yellow eye patches, highly social.",
+            "habitat": "Urban and agricultural areas",
+            "rarity": "Very Common",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Common_Myna_%28Acridotheres_tristis%29.jpg/640px-Common_Myna_%28Acridotheres_tristis%29.jpg",
+            "wingspan": "12-14 cm",
+            "lifespan": "4-12 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Insects, fruits, and food waste",
+            "funFact": "They are known as the 'farmer's friend' because they eat grasshoppers and crop pests.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "March to September",
+            "hotspots": "Widespread in lowlands and mid-hills"
         },
         {
             "commonName": "Kalij Pheasant",
             "scientificName": "Lophura leucomelanos",
-            "description": "A common forest pheasant. Males are glossy blue-black with a white rump and a red face patch. Found in middle hills.",
+            "description": "Glossy blue-black forest pheasant common in middle hills.",
+            "habitat": "Dense hill forests",
             "rarity": "Common",
-            "habitat": "Hill Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Kalij_Pheasant_Nepal.jpg/640px-Kalij_Pheasant_Nepal.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Kalij_Pheasant_Nepal.jpg/640px-Kalij_Pheasant_Nepal.jpg",
+            "wingspan": "60-80 cm (Length)",
+            "lifespan": "10-15 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Seeds, berries, and insects",
+            "funFact": "They have a distinctive white crest and red facial skin.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "March to June",
+            "hotspots": "Shivapuri Nagarjun, Nagarjun Forest"
+        },
+        {
+            "commonName": "Red-vented Bulbul",
+            "scientificName": "Pycnonotus cafer",
+            "description": "Noisy bird with a black crest and red patch under the tail.",
+            "habitat": "Gardens and scrub forest",
+            "rarity": "Very Common",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Red-vented_Bulbul_Pycnonotus_cafer.jpg/640px-Red-vented_Bulbul_Pycnonotus_cafer.jpg",
+            "wingspan": "25-28 cm",
+            "lifespan": "8-10 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Fruits, nectar, and insects",
+            "funFact": "They are highly social and often found in pairs or small groups.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "April to September",
+            "hotspots": "Kathmandu Gardens, Parks, Villages"
+        },
+        {
+            "commonName": "White-Breasted Kingfisher",
+            "scientificName": "Halcyon smyrnensis",
+            "description": "Bold blue bird with a chocolate-brown head and white breast.",
+            "habitat": "Farms, gardens, and wetlands",
+            "rarity": "Common",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/White-throated_Kingfisher_Halcyon_smyrnensis.jpg/640px-White-throated_Kingfisher_Halcyon_smyrnensis.jpg",
+            "wingspan": "11-13 cm",
+            "lifespan": "11 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Rodents, frogs, insects, and fish",
+            "funFact": "Unlike most kingfishers, they often hunt far away from any water body.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "March to August",
+            "hotspots": "Terai wetlands, Pokhara, Kathmandu valleys"
         },
         {
             "commonName": "Rufous-bellied Niltava",
             "scientificName": "Niltava sundara",
-            "description": "A beautiful flycatcher. The male has deep blue upperparts and bright rufous underparts. Found in forest edges.",
+            "description": "Stunning flycatcher with deep blue and bright rufous colors.",
+            "habitat": "Subtropical forest edges and evergreen forests",
             "rarity": "Common",
-            "habitat": "Subtropical Forest",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Rufous-bellied_Niltava_Niltava_sundara.jpg/640px-Rufous-bellied_Niltava_Niltava_sundara.jpg"
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Rufous-bellied_Niltava_Niltava_sundara.jpg/640px-Rufous-bellied_Niltava_Niltava_sundara.jpg",
+            "wingspan": "15-18 cm",
+            "lifespan": "5-8 years",
+            "conservationStatus": "Least Concern",
+            "diet": "Small insects and berries",
+            "funFact": "They sit very still on a perch before darting out to catch a flying insect.",
+            "migrationStatus": "Altitudinal Migrant",
+            "breedingSeason": "April to July",
+            "hotspots": "Shivapuri Hill, Phulchowki, Pulchowki"
+        },
+        {
+            "commonName": "Great Slatey Woodpecker",
+            "scientificName": "Mulleripicus pulverulentus",
+            "description": "The world's largest woodpecker, highly endangered.",
+            "habitat": "Old-growth lowland forests",
+            "rarity": "Rare",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mulleripicus_pulverulentus.jpg/640px-Mulleripicus_pulverulentus.jpg",
+            "wingspan": "50-60 cm",
+            "lifespan": "15-20 years",
+            "conservationStatus": "Vulnerable (Global)",
+            "diet": "Ants, termites, and woodboring larvae",
+            "funFact": "It has an extremely long, slender neck and travels in small, noisy family groups.",
+            "migrationStatus": "Resident",
+            "breedingSeason": "March to May",
+            "hotspots": "Shuklaphanta National Park, Bardia"
         }
     ]
 }
@@ -169,6 +334,8 @@ data = {
 url = "http://localhost:5000/api/birds/seed"
 try:
     response = requests.post(url, json=data)
-    print(response.status_code, response.json())
+    print(f"Status Code: {response.status_code}")
+    print(response.json())
 except Exception as e:
-    print(f"Error: {e}")
+    print(f"Error connecting to server: {e}")
+    print("Make sure the Flask server is running at http://localhost:5000")

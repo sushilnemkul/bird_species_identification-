@@ -34,9 +34,25 @@ export const logout = () => {
 };
 
 export const getCurrentUser = async () => {
-    const userStr = localStorage.getItem(USER_KEY);
-    if (!userStr) return null;
-    return JSON.parse(userStr);
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return null;
+
+    try {
+        const response = await axios.get(`${API_URL}/auth/verify`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        // Update stored user data with fresh data from server
+        const { user } = response.data;
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+        return user;
+    } catch (error) {
+        // Token is invalid or expired
+        logout();
+        return null;
+    }
 };
 
 export const updateProfile = async (userId, data) => {
