@@ -29,3 +29,17 @@ venv/
 node_modules/
 *.iso
 __pycache__/
+
+
+Backend/dataset/
+.venv/
+Backend/saved_model/
+Backend/uploads/
+__pycache__/
+
+
+*.iso
+Backend/dataset/
+Backend/saved_model/
+Backend/uploads/
+.venv/
