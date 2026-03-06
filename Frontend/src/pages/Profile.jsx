@@ -1,15 +1,28 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useBird } from '../context/BirdContext';
-import { FaUser, FaEnvelope, FaImage, FaSignOutAlt, FaEdit, FaLock, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import { 
+    FaUser, 
+    FaEnvelope, 
+    FaSignOutAlt, 
+    FaEdit, 
+    FaLock, 
+    FaCheckCircle, 
+    FaExclamationCircle, 
+    FaCamera, 
+    FaMapMarkerAlt, 
+    FaCalendarAlt,
+    FaLeaf,
+    FaShieldAlt
+} from 'react-icons/fa';
 import { updateProfile, changePassword } from '../services/AuthService';
 import { ProfileSkeleton } from '../components/LoadingSkeleton';
 
 const Profile = () => {
     const { user, logout, loading, updateUser } = useAuth();
     const { history } = useBird();
+    const [activeTab, setActiveTab] = useState('overview');
 
-    const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ 
         username: user?.username || user?.name || '', 
         email: user?.email || '' 
@@ -18,10 +31,7 @@ const Profile = () => {
     const [status, setStatus] = useState({ type: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    if (loading) {
-        return <ProfileSkeleton />;
-    }
-
+    if (loading) return <ProfileSkeleton />;
     if (!user) return null;
 
     const handleProfileUpdate = async (e) => {
@@ -34,7 +44,6 @@ const Profile = () => {
                 email: editData.email
             });
             updateUser(updatedUser);
-            setIsEditing(false);
             setStatus({ type: 'success', message: 'Profile updated successfully!' });
         } catch (error) {
             setStatus({ type: 'error', message: error.message });
@@ -62,245 +71,287 @@ const Profile = () => {
         }
     };
 
+    const TabButton = ({ id, label, icon: Icon }) => (
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center gap-3 w-full p-4 rounded-xl transition-all duration-300 font-medium ${
+                activeTab === id 
+                ? 'bg-primary text-white shadow-lg shadow-primary/30' 
+                : 'text-gray-500 hover:bg-gray-50 hover:text-primary'
+            }`}
+        >
+            <Icon className="text-xl" />
+            <span>{label}</span>
+            {activeTab === id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white"></div>}
+        </button>
+    );
+
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-12">
-            <h1 className="text-3xl font-bold text-dark text-center">Your Profile</h1>
-
-            {status.message && (
-                <div className={`p-4 rounded-xl flex items-center gap-3 animate-slide-in ${
-                    status.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-                }`}>
-                    {status.type === 'success' ? <FaCheckCircle /> : <FaExclamationCircle />}
-                    {status.message}
+        <div className="space-y-8 animate-fade-in">
+            {/* Header Banner */}
+            <div className="relative h-48 rounded-3xl bg-gradient-to-r from-primary to-emerald-800 overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div className="absolute bottom-6 left-8 text-white z-10">
+                    <h1 className="text-3xl font-bold mb-1">My Dashboard</h1>
+                    <p className="opacity-90 flex items-center gap-2 text-sm">
+                        <FaLeaf className="text-secondary" /> 
+                        Manage your profile and track your discoveries
+                    </p>
                 </div>
-            )}
+            </div>
 
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                <div className="h-40 bg-gradient-to-r from-primary via-secondary to-accent opacity-90"></div>
-                <div className="px-8 pb-8">
-                    <div className="relative flex justify-between items-end -mt-16 mb-8">
-                        <div className="relative group">
-                            <img 
-                                src={user.avatar} 
-                                alt={user.username || user.name} 
-                                className="w-32 h-32 rounded-3xl border-8 border-white shadow-2xl bg-white object-cover transform group-hover:scale-105 transition-transform"
-                            />
-                            <div className="absolute inset-0 bg-black/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                                <FaEdit className="text-white text-xl" />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Left Sidebar */}
+                    <div className="lg:col-span-4 space-y-6">
+                        {/* User Card */}
+                        <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 relative overflow-hidden">
+                            <div className="relative z-10 flex flex-col items-center text-center">
+                                <div className="relative mb-4 group">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full opacity-75 blur group-hover:opacity-100 transition duration-500"></div>
+                                    <img 
+                                        src={user.avatar} 
+                                        alt={user.username || user.name} 
+                                        className="relative w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+                                    />
+                                    <button className="absolute bottom-0 right-0 p-2 bg-dark text-white rounded-full shadow-lg hover:bg-primary transition-colors">
+                                        <FaCamera className="text-sm" />
+                                    </button>
+                                </div>
+                                <h2 className="text-2xl font-bold text-dark mb-1">{user.username || user.name}</h2>
+                                <p className="text-gray-500 text-sm mb-4">{user.email}</p>
+                                <div className="flex gap-2 mb-6">
+                                    <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-100 uppercase tracking-wide">
+                                        Explorer
+                                    </span>
+                                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-100 uppercase tracking-wide">
+                                        Verified
+                                    </span>
+                                </div>
+                                
+                                <div className="w-full grid grid-cols-2 gap-4 border-t border-gray-100 pt-6">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-primary">{history.length}</div>
+                                        <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">Sightings</div>
+                                    </div>
+                                    <div className="text-center border-l border-gray-100">
+                                        <div className="text-2xl font-bold text-secondary">
+                                            {user.created_at ? new Date(user.created_at).getFullYear() : '2024'}
+                                        </div>
+                                        <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">Joined</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <button 
-                            onClick={logout}
-                            className="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-6 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center gap-2 mb-2 shadow-sm"
-                        >
-                            <FaSignOutAlt /> Logout
-                        </button>
+
+                        {/* Navigation Menu */}
+                        <div className="bg-white rounded-3xl p-4 shadow-xl border border-gray-100">
+                            <div className="space-y-2">
+                                <TabButton id="overview" label="Overview" icon={FaCheckCircle} />
+                                <TabButton id="edit" label="Edit Profile" icon={FaEdit} />
+                                <TabButton id="security" label="Security" icon={FaShieldAlt} />
+                            </div>
+                            <div className="my-4 border-t border-gray-100"></div>
+                            <button 
+                                onClick={logout}
+                                className="flex items-center gap-3 w-full p-4 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all font-medium"
+                            >
+                                <FaSignOutAlt className="text-xl" />
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-                        <div className="lg:col-span-3 space-y-8">
-                            {/* Profile Info Section */}
-                            <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold text-dark flex items-center gap-2">
-                                        <FaUser className="text-primary" /> Profile Information
-                                    </h3>
-                                    {!isEditing && (
-                                        <button 
-                                            onClick={() => {
-                                                setIsEditing(true);
-                                                setEditData({ 
-                                                    username: user.username || user.name || '', 
-                                                    email: user.email 
-                                                });
-                                            }}
-                                            className="text-primary hover:text-secondary font-semibold flex items-center gap-1 transition-colors"
-                                        >
-                                            <FaEdit /> Edit
-                                        </button>
-                                    )}
+                    {/* Right Content */}
+                    <div className="lg:col-span-8">
+                        <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 min-h-[600px]">
+                            {/* Status Message */}
+                            {status.message && (
+                                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in ${
+                                    status.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+                                }`}>
+                                    {status.type === 'success' ? <FaCheckCircle /> : <FaExclamationCircle />}
+                                    <p className="font-medium">{status.message}</p>
                                 </div>
+                            )}
 
-                                {isEditing ? (
-                                    <form onSubmit={handleProfileUpdate} className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-1">Username</label>
-                                            <input 
-                                                type="text"
-                                                value={editData.username}
-                                                onChange={(e) => setEditData({...editData, username: e.target.value})}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                                                required
-                                            />
+                            {/* Overview Tab */}
+                            {activeTab === 'overview' && (
+                                <div className="space-y-8 animate-fade-in">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-2xl font-bold text-dark">Recent Activity</h3>
+                                        <button className="text-primary hover:text-primary/80 text-sm font-semibold">View All History</button>
+                                    </div>
+
+                                    {history.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {history.slice(0, 4).map((record) => (
+                                                <div key={record.id} className="group bg-gray-50 hover:bg-white p-4 rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 flex gap-4">
+                                                    <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
+                                                        <img src={record.imageUrl || record.image} alt={record.commonName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                        <h4 className="font-bold text-dark truncate group-hover:text-primary transition-colors">{record.commonName}</h4>
+                                                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                                                            <FaCalendarAlt className="text-gray-300" />
+                                                            {new Date(record.identifiedAt).toLocaleDateString()}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                                            <FaMapMarkerAlt className="text-gray-300" />
+                                                            {record.location || 'Unknown Location'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
-                                            <input 
-                                                type="email"
-                                                value={editData.email}
-                                                onChange={(e) => setEditData({...editData, email: e.target.value})}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                                                required
-                                            />
+                                    ) : (
+                                        <div className="text-center py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                                                <FaCamera className="text-2xl" />
+                                            </div>
+                                            <h4 className="text-lg font-bold text-gray-600">No discoveries yet</h4>
+                                            <p className="text-gray-500 text-sm mt-1">Start exploring to build your collection!</p>
                                         </div>
-                                        <div className="flex gap-3 pt-2">
+                                    )}
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                                        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-6 rounded-2xl border border-blue-100">
+                                            <div className="text-blue-600 mb-2"><FaUser className="text-2xl" /></div>
+                                            <div className="text-2xl font-bold text-dark">{history.length}</div>
+                                            <div className="text-xs text-blue-600 font-bold uppercase tracking-wider">Total Scans</div>
+                                        </div>
+                                        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-2xl border border-purple-100">
+                                            <div className="text-purple-600 mb-2"><FaLeaf className="text-2xl" /></div>
+                                            <div className="text-2xl font-bold text-dark">{new Set(history.map(h => h.commonName)).size}</div>
+                                            <div className="text-xs text-purple-600 font-bold uppercase tracking-wider">Unique Species</div>
+                                        </div>
+                                        <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 p-6 rounded-2xl border border-amber-100">
+                                            <div className="text-amber-600 mb-2"><FaCheckCircle className="text-2xl" /></div>
+                                            <div className="text-2xl font-bold text-dark">100%</div>
+                                            <div className="text-xs text-amber-600 font-bold uppercase tracking-wider">Profile Strength</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Edit Profile Tab */}
+                            {activeTab === 'edit' && (
+                                <div className="max-w-xl mx-auto py-4 animate-fade-in">
+                                    <h3 className="text-2xl font-bold text-dark mb-6">Edit Profile</h3>
+                                    <form onSubmit={handleProfileUpdate} className="space-y-6">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-gray-700 ml-1">Username</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                                    <FaUser />
+                                                </div>
+                                                <input 
+                                                    type="text"
+                                                    value={editData.username}
+                                                    onChange={(e) => setEditData({...editData, username: e.target.value})}
+                                                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                                    placeholder="Enter your username"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-gray-700 ml-1">Email Address</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                                    <FaEnvelope />
+                                                </div>
+                                                <input 
+                                                    type="email"
+                                                    value={editData.email}
+                                                    onChange={(e) => setEditData({...editData, email: e.target.value})}
+                                                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                                    placeholder="name@example.com"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="pt-4">
                                             <button 
                                                 type="submit"
                                                 disabled={isSubmitting}
-                                                className="flex-1 bg-primary text-white py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-50"
+                                                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
                                             >
-                                                {isSubmitting ? 'Saving...' : 'Save Changes'}
-                                            </button>
-                                            <button 
-                                                type="button"
-                                                onClick={() => setIsEditing(false)}
-                                                className="px-6 py-3 rounded-xl border border-gray-200 font-bold text-gray-600 hover:bg-gray-50 transition-all"
-                                            >
-                                                Cancel
+                                                {isSubmitting ? (
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                ) : (
+                                                    <>
+                                                        <FaCheckCircle /> Save Changes
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     </form>
-                                ) : (
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-100">
-                                            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500">
-                                                <FaUser />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500 font-medium">Username</p>
-                                                <p className="font-bold text-dark">{user.username || user.name}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-4 p-3 bg-white rounded-xl border border-gray-100">
-                                            <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500">
-                                                <FaEnvelope />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500 font-medium">Email Address</p>
-                                                <p className="font-bold text-dark">{user.email}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Security / Password Section */}
-                            <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-                                <h3 className="text-xl font-bold text-dark flex items-center gap-2 mb-6">
-                                    <FaLock className="text-accent" /> Security Settings
-                                </h3>
-                                <form onSubmit={handlePasswordChange} className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Current Password</label>
-                                        <input 
-                                            type="password"
-                                            value={passwords.old}
-                                            onChange={(e) => setPasswords({...passwords, old: e.target.value})}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent focus:border-transparent transition-all outline-none"
-                                            placeholder="••••••••"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
-                                            <input 
-                                                type="password"
-                                                value={passwords.new}
-                                                onChange={(e) => setPasswords({...passwords, new: e.target.value})}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent focus:border-transparent transition-all outline-none"
-                                                placeholder="Min. 6 chars"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-1">Confirm New Password</label>
-                                            <input 
-                                                type="password"
-                                                value={passwords.confirm}
-                                                onChange={(e) => setPasswords({...passwords, confirm: e.target.value})}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent focus:border-transparent transition-all outline-none"
-                                                placeholder="Repeat password"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                    <button 
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className="w-full bg-accent text-white py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-accent/30 transition-all disabled:opacity-50 mt-2"
-                                    >
-                                        {isSubmitting ? 'Updating...' : 'Update Password'}
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-
-                        {/* Stats Sidebar */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-gradient-to-br from-dark to-gray-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group">
-                                <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
-                                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                    <FaImage className="text-secondary" /> Activity Summary
-                                </h3>
-                                
-                                <div className="grid grid-cols-1 gap-4">
-                                    <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10 text-center">
-                                        <div className="text-4xl font-extrabold text-primary mb-1">{history.length}</div>
-                                        <div className="text-xs text-blue-200 uppercase tracking-widest font-bold">Total Sightings</div>
-                                    </div>
-                                    <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10 text-center">
-                                        <div className="text-4xl font-extrabold text-accent mb-1">{new Set(history.map(h => h.commonName)).size}</div>
-                                        <div className="text-xs text-orange-200 uppercase tracking-widest font-bold">Unique Species</div>
-                                    </div>
                                 </div>
+                            )}
 
-                                <div className="mt-10">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h4 className="text-sm font-bold uppercase tracking-wider text-gray-400">Recent Discoveries</h4>
-                                        <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-md">Latest 3</span>
-                                    </div>
-                                    <div className="space-y-4">
-                                        {history.slice(0, 3).map((record) => (
-                                            <div key={record.id} className="flex items-center gap-4 group/item">
-                                                <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg border-2 border-white/10">
-                                                    <img src={record.imageUrl || record.image} alt="" className="w-full h-full object-cover group-hover/item:scale-110 transition-transform" />
+                            {/* Security Tab */}
+                            {activeTab === 'security' && (
+                                <div className="max-w-xl mx-auto py-4 animate-fade-in">
+                                    <h3 className="text-2xl font-bold text-dark mb-6">Security Settings</h3>
+                                    <form onSubmit={handlePasswordChange} className="space-y-6">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-gray-700 ml-1">Current Password</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                                    <FaLock />
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-bold truncate">{record.commonName}</p>
-                                                    <p className="text-xs text-gray-400">{new Date(record.identifiedAt).toLocaleDateString()}</p>
-                                                </div>
+                                                <input 
+                                                    type="password"
+                                                    value={passwords.old}
+                                                    onChange={(e) => setPasswords({...passwords, old: e.target.value})}
+                                                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                                    placeholder="••••••••"
+                                                />
                                             </div>
-                                        ))}
-                                        {history.length === 0 && (
-                                            <div className="text-center py-6 bg-white/5 rounded-2xl border border-dashed border-white/10">
-                                                <p className="text-sm text-gray-400 italic">No discoveries yet. Time to explore!</p>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-gray-700 ml-1">New Password</label>
+                                                <input 
+                                                    type="password"
+                                                    value={passwords.new}
+                                                    onChange={(e) => setPasswords({...passwords, new: e.target.value})}
+                                                    className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                                    placeholder="Min. 6 characters"
+                                                />
                                             </div>
-                                        )}
-                                    </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-gray-700 ml-1">Confirm Password</label>
+                                                <input 
+                                                    type="password"
+                                                    value={passwords.confirm}
+                                                    onChange={(e) => setPasswords({...passwords, confirm: e.target.value})}
+                                                    className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                                                    placeholder="Repeat password"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="pt-4">
+                                            <button 
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                                className="w-full bg-dark hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+                                            >
+                                                {isSubmitting ? (
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                ) : (
+                                                    <>
+                                                        <FaShieldAlt /> Update Password
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </div>
-
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                                <h4 className="text-sm font-bold text-dark mb-4 uppercase tracking-widest border-l-4 border-primary pl-3">Account Status</h4>
-                                <div className="flex items-center justify-between text-sm py-2 border-b border-gray-50">
-                                    <span className="text-gray-500 font-medium">Joined Birdly</span>
-                                    <span className="font-bold text-dark">
-                                        {user.created_at 
-                                            ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                                            : 'N/A'}
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm py-2">
-                                    <span className="text-gray-500 font-medium">Identity Status</span>
-                                    <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-bold uppercase">Verified Enthusiast</span>
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     );
 };
 

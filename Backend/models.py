@@ -11,9 +11,11 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), default='user')  # 'user' or 'admin'
+    is_suspended = db.Column(db.Boolean, default=False)
+    is_flagged = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    sightings = db.relationship('BirdSighting', backref='user', lazy=True)
+    sightings = db.relationship('BirdSighting', backref='user', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -21,6 +23,8 @@ class User(db.Model):
             'username': self.username,
             'email': self.email,
             'role': self.role,
+            'is_suspended': self.is_suspended,
+            'is_flagged': self.is_flagged,
             'avatar': f"https://ui-avatars.com/api/?name={self.username}&background=random",
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

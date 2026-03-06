@@ -1,9 +1,0 @@
-📊 Class Distribution:
-  - Common Kingfisher: 646 images
-  - Common Myna: 648 images
-  - Common Tailorbird: 642 images
-  - Coppersmith Barbet: 544 images
-  - House Crow: 836 images
-  - White-Breasted Kingfisher: 651 images
-
-Total training images: 3967

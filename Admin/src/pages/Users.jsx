@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getUsers, deleteUser } from '../services/AdminService';
-import { FaTrash, FaUser, FaSearch } from 'react-icons/fa';
+import { getUsers, deleteUser, suspendUser, unsuspendUser, flagUser, unflagUser } from '../services/AdminService';
+import { FaTrash, FaUser, FaSearch, FaBan, FaCheckCircle, FaFlag } from 'react-icons/fa';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -31,6 +31,44 @@ const Users = () => {
             } catch (error) {
                 alert(error.message);
             }
+        }
+    };
+
+    const handleSuspend = async (id) => {
+        if (window.confirm('Are you sure you want to suspend this user?')) {
+            try {
+                await suspendUser(id);
+                setUsers(users.map(user => user.id === id ? { ...user, is_suspended: true } : user));
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    };
+
+    const handleUnsuspend = async (id) => {
+        try {
+            await unsuspendUser(id);
+            setUsers(users.map(user => user.id === id ? { ...user, is_suspended: false } : user));
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const handleFlag = async (id) => {
+        try {
+            await flagUser(id);
+            setUsers(users.map(user => user.id === id ? { ...user, is_flagged: true } : user));
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const handleUnflag = async (id) => {
+        try {
+            await unflagUser(id);
+            setUsers(users.map(user => user.id === id ? { ...user, is_flagged: false } : user));
+        } catch (error) {
+            alert(error.message);
         }
     };
 
@@ -67,6 +105,7 @@ const Users = () => {
                                 <th className="p-4 text-gray-500 font-medium text-sm">User</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Email</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Role</th>
+                                <th className="p-4 text-gray-500 font-medium text-sm">Status</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Joined Date</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Actions</th>
                             </tr>
@@ -90,18 +129,73 @@ const Users = () => {
                                             {user.role}
                                         </span>
                                     </td>
+                                    <td className="p-4">
+                                        {/* Status Badges */}
+                                        <div className="flex gap-2">
+                                            {user.is_suspended && (
+                                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                                                    Suspended
+                                                </span>
+                                            )}
+                                            {user.is_flagged && (
+                                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                                                    Flagged
+                                                </span>
+                                            )}
+                                            {!user.is_suspended && !user.is_flagged && (
+                                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                                    Active
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="p-4 text-gray-500 text-sm">
                                         {new Date(user.created_at).toLocaleDateString()}
                                     </td>
                                     <td className="p-4">
-                                        <button 
-                                            onClick={() => handleDelete(user.id, user.username)} 
-                                            title="Delete User" 
-                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                            disabled={user.role === 'admin'} // Prevent deleting admins for safety
-                                        >
-                                            <FaTrash />
-                                        </button>
+                                        <div className="flex gap-2">
+                                            {/* Suspend/Unsuspend Button */}
+                                            {user.is_suspended ? (
+                                                <button 
+                                                    onClick={() => handleUnsuspend(user.id)} 
+                                                    title="Unsuspend User" 
+                                                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                    disabled={user.role === 'admin'}
+                                                >
+                                                    <FaCheckCircle />
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => handleSuspend(user.id)} 
+                                                    title="Suspend User" 
+                                                    className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
+                                                    disabled={user.role === 'admin'}
+                                                >
+                                                    <FaBan />
+                                                </button>
+                                            )}
+
+                                            {/* Flag/Unflag Button */}
+                                            {user.is_flagged ? (
+                                                <button 
+                                                    onClick={() => handleUnflag(user.id)} 
+                                                    title="Unflag User" 
+                                                    className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                                                    disabled={user.role === 'admin'}
+                                                >
+                                                    <FaFlag />
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => handleFlag(user.id)} 
+                                                    title="Flag User" 
+                                                    className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
+                                                    disabled={user.role === 'admin'}
+                                                >
+                                                    <FaFlag />
+                                                </button>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

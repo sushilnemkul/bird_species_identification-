@@ -2,6 +2,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FaArrowLeft, FaExpand } from 'react-icons/fa';
 import ImageModal from '../components/ImageModal';
+import NepalHotspotMap from '../components/NepalHotspotMap';
 
 const BirdDetails = () => {
   const location = useLocation();
@@ -147,6 +148,19 @@ const BirdDetails = () => {
                </div>
             </div>
           </div>
+
+          {/* Interactive Hotspot Map */}
+          {hotspots && hotspots !== 'Unknown' && hotspots !== 'Wide distribution' && (
+              <div className="mt-8">
+                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Location Map</h3>
+                  <div className="w-full bg-white p-2 rounded-2xl border border-gray-200 shadow-sm">
+                      <NepalHotspotMap 
+                          hotspotsString={hotspots} 
+                          apiKey="AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao" 
+                      />
+                  </div>
+              </div>
+          )}
 
           {typeof bird.confidence === 'number' && (
             <div className="pt-6 border-t border-slate-100">

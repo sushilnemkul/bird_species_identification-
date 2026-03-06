@@ -20,6 +20,18 @@ export const identifyBird = async (imageFile, userId = null) => {
         // Map backend response to frontend BirdCard/History format
         const { prediction, confidence, details, is_confident, message, warning } = response.data;
 
+        // Normalize reference images from backend
+        if (details.image && !details.image.startsWith('http')) {
+            details.image = `${API_URL}${details.image}`;
+        }
+        if (details.images && Array.isArray(details.images)) {
+            details.images = details.images.map(img => img.startsWith('http') ? img : `${API_URL}${img}`);
+        } else if (details.image) {
+            details.images = [details.image]; // Fallback if images array missing
+        } else {
+            details.images = [];
+        }
+
         return {
             id: Date.now().toString(), // Helper ID, backend should provide real one
             commonName: prediction,

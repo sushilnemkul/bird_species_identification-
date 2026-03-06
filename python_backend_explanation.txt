@@ -1,0 +1,87 @@
+PYTHON BACKEND EXPLANATION
+An overview of the Flask backend for the Bird Identification System.
+
+=========================================
+OVERVIEW
+=========================================
+The backend is written in Python using the Flask micro-framework. Its primary jobs are:
+1. Serving a REST API for the React frontends.
+2. Managing the PostgreSQL database using SQLAlchemy.
+3. Loading and running the TensorFlow/Keras Convolutional Neural Network (CNN) to identify birds from images.
+
+The backend consists of a few crucial files:
+- `app.py`: The main server file containing all the route endpoints and ML logic.
+- `models.py`: The database schemas mapping Python classes to SQL tables.
+- `bird_info.py`: A local dictionary containing rich biological data about birds (used as a fallback/seed data source).
+
+=========================================
+1. INITIALIZATION & SETUP (app.py)
+=========================================
+The file begins by importing required libraries: `Flask`, `SQLAlchemy`, `TensorFlow/Keras`, `NumPy`, and `Pillow (PIL)`.
+
+- App Configuration: `app = Flask(__name__)` initializes the application. We configure the database URI (`SQLALCHEMY_DATABASE_URI`) to point to the local PostgreSQL instance.
+- CORS: `CORS(app)` is enabled so the React frontends (running on ports 5173 and 5174) can make requests to this API (running on port 5000) without browser security blocking them.
+- NumPy Patch: Because newer versions of NumPy removed `np.object`, and our older Keras model relies on it during loading, we manually patch it: `np.object = object`.
+
+=========================================
+2. THE MACHINE LEARNING MODEL (train_cnn.py & app.py)
+=========================================
+The core intelligence of the application is a custom Convolutional Neural Network (CNN) built with TensorFlow/Keras.
+The model was trained on thousands of bird images.
+
+Key Training Hyperparameters & Details:
+- Image Resolution: 192x192 pixels (converted to RGB).
+- CNN Architecture (Filters): The model features 4 distinct convolutional blocks to extract patterns (like edges and textures):
+    * Block 1: 32 Filters (3x3 kernel)
+    * Block 2: 64 Filters (3x3 kernel)
+    * Block 3: 128 Filters (3x3 kernel)
+    * Block 4: 128 Filters (3x3 kernel)
+- Regularization: To prevent overfitting, the network utilizes `BatchNormalization`, various `Dropout` layers (0.2 to 0.5), and `GlobalAveragePooling2D`.
+- Hyperparameters: Trained for 70 Epochs with a Batch Size of 64 and a Learning Rate of 0.0015 using the Adam optimizer.
+- Data Augmentation: Random horizontal flipping, rotation, zoom, and contrast adjustments were applied to the training data to make the model robust to different lighting and angles.
+
+At runtime (`app.py`), the pre-trained weights are loaded from `saved_model/bird_model.keras`.
+The application maps the output node (highest probability index) to `CLASS_NAMES` (e.g., ['Asian Green Bee-Eater', 'Common Kingfisher'...]).
+
+=========================================
+3. THE DATABASE SCHEMAS (models.py)
+=========================================
+Using Flask-SQLAlchemy, the database is mapped via Objects:
+- `User`: Stores `username`, `email`, hashed passwords, and roles (`user` or `admin`). Includes flags like `is_suspended`.
+- `Bird`: Stores the core encyclopedia data (`common_name`, `scientific_name`, `habitat`, `diet`, `hotspots`).
+- `BirdImage`: A one-to-many relationship with `Bird`, allowing multiple reference photos per species.
+- `BirdSighting`: Tracks history. Every time a user identifies a bird, a row is created linking the `User` ID, the identified `bird_name`, the `confidence` score, and a `timestamp`.
+
+=========================================
+4. CORE API ENDPOINTS (app.py)
+=========================================
+
+--- PREDICTION ENDPOINT ---
+`@app.route('/predict', methods=['POST'])`
+This is the most important function. The flow is:
+1. Validation: Checks if the request contains an image file.
+2. Image Processing: Uses PIL (`Image.open()`) to load the image, converts it to RGB, resizes it to 224x224 pixels (the exact size the CNN expects), and normalizes the pixel values (converting 0-255 colors into floats forming a NumPy array).
+3. Prediction: `predictions = model.predict(img_array)`. This runs the math. The result is an array of probabilities.
+4. Interpretation: `np.argmax(predictions[0])` finds the highest probability index. We map this index to `CLASS_NAMES` to get the string name (e.g., "House Crow").
+5. Database Lookup: We query `Bird.query.filter_by(common_name=predicted_class).first()` to fetch all the biological facts about this bird.
+6. JSON Response: We package the prediction string, the confidence float, the array of `images`, the `hotspots` strings, and send it back to the React frontend.
+
+--- AUTHENTICATION ENDPOINTS ---
+`@app.route('/api/auth/register')` / `@app.route('/api/auth/login')`
+- Register: Receives JSON containing username, email, and password. Checks if user exists. If not, hashes the password using `werkzeug.security.generate_password_hash` and saves it to the DB.
+- Login: Compares the provided password against the stored hash using `check_password_hash`. If successful, the API returns the user details.
+
+--- USER HISTORY ENDPOINTS ---
+`@app.route('/api/history', methods=['POST'])`
+- When a logged-in user successfully identifies a bird on the frontend, a secondary POST request is sent here.
+- It instantiates a new `BirdSighting` object and saves it to PostgreSQL, allowing the dashboard to render user history later.
+
+--- ADMIN ENDPOINTS ---
+`@app.route('/api/admin/stats')` / `@app.route('/api/admin/users/<int:user_id>/suspend')`
+- These routes enforce admin-only logic. They query the database using SQLAlchemy functions like `func.count()` to total up sightings, users, and returning aggregated analytics for the admin panel.
+- The suspend route simply flips the boolean `is_suspended` on a User object and commits the database change.
+
+=========================================
+SUMMARY
+=========================================
+In short, `app.py` acts as the traffic controller. It uses standard web practices (Flask/SQLAlchemy) to manage data and users, but encapsulates a heavy deep-learning process (`model.predict()`) halfway through the traffic flow, merging artificial intelligence with standard web data retrieval seamlessly.

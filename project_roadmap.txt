@@ -1,0 +1,72 @@
+BIRD IDENTIFICATION SYSTEM - PROJECT ROADMAP & SUMMARY
+
+This document outlines the complete journey of building the Bird Identification System (Project 6), documenting the features added, the architectural decisions, the core functions, and the challenges overcome.
+
+=========================================
+1. PROJECT ARCHITECTURE & HOW IT WORKS
+=========================================
+The project operates as a modern 3-tier web application designed to allow users to upload images of birds from Nepal and receive AI-powered identification, tracking their history and allowing administrators to manage the platform.
+
+- AI Model: A convolutional neural network (CNN) trained via TensorFlow/Keras on bird images. It accepts an image tensor and outputs confidence scores for known bird species.
+- Backend (Python/Flask): A REST API that handles HTTP requests. It routes user authentication, handles image uploads, runs the AI model prediction, and retrieves biological data from the database.
+- Database (PostgreSQL): Stores user credentials, sighting histories, and rich biological information about the birds (habitats, wingspans, etc.).
+- Frontend (React/Vite): The user-facing portal where users upload images, view beautiful interactive results, and browse their history.
+- Admin Panel (React/Vite): A secure dashboard for administrators to view system analytics, manage users (suspend/unsuspend), and oversee the database.
+
+=========================================
+2. DEVELOPMENT ROADMAP & WHAT WAS ADDED
+=========================================
+
+PHASE 1: Foundation & Machine Learning
+- Initial setup of the Python backend and TensorFlow machine learning model.
+- Established the PostgreSQL database schema (`models.py`) containing `User`, `Bird`, and `BirdSighting` tables.
+- Seeded the database with Nepalese bird data (Himalayan Monal, Spiny Babbler, etc.) using custom seed scripts.
+
+PHASE 2: Backend API & Core Functionality
+- Built `app.py` with Flask to serve HTTP endpoints.
+- Implemented JWT-based authentication for secure login/registration.
+- Created the core `/predict` endpoint: It receives an image, processes it through the saved Keras model, looks up the identified bird in the database, and returns the combined data (prediction + biological facts).
+
+PHASE 3: Frontend Development & Admin Separation
+- Built the main user-facing React application using Vite and TailwindCSS for a modern, responsive design.
+- Originally, Admin and User views were intertwined. We undertook a major refactor to completely separate the Admin portal into its own standalone React application (`Project6/Admin`), isolating admin-related routing and state from the public site.
+- Enhanced the Admin Dashboard with user management features, allowing admins to view analytics and suspend/flag abusive accounts.
+
+PHASE 4: Security & Authentication Fixes
+- Debugged critical routing vulnerabilities where users could bypass the login screen. We implemented strict Protected Routes in React and tightened JWT token validation on the Flask backend to ensure histories and admin panels stayed secure.
+
+PHASE 5: Advanced UI & Interactive Features (Recent Updates)
+- Image Cropping: Integrated `react-easy-crop` to allow users to zoom and crop their photos before sending them to the AI, dramatically improving prediction accuracy by removing background noise.
+- Identification Basis: Upgraded the results screen to show a side-by-side comparison of the user's cropped image against the official database reference image, along with a text breakdown of "Key Features".
+- Reference Gallery: Modified the backend to return an array of multiple images for each bird, and built a dynamic photo gallery in the frontend to show different angles of the identified species.
+- Geographic Visualizations: 
+   - Analyzed `bird_info.py` to extract text-based "hotspots" and mapped them to precise Lat/Lng coordinates.
+   - Built a Region Pie Chart using `recharts` to show the ecological distribution of a bird across Nepal's regions (Mountain, Hilly, Terai).
+   - Built an interactive Google Map using `@react-google-maps/api` to plot specific hotspot pins on the Explore Species page.
+
+=========================================
+3. CORE FUNCTIONS USED
+=========================================
+- `identifyBird()` [Frontend - BirdService.js]: Handles sending the cropped image `File` as `multipart/form-data` to the Flask backend and parsing the complex JSON response.
+- `predict_bird()` [Backend - app.py]: The heart of the backend. It takes the uploaded image bytes, converts them to a numpy array, runs `model.predict()`, looks up the highest scoring class index, queries the `Bird` database for facts, and binds it all into a JSON response.
+- `getCoordinatesFromHotspots()` [Frontend - geoData.js]: A custom geographic mapping function that parses comma-separated location strings from the database and returns a sanitized array of Lat/Lng objects for Google Maps to render.
+- `createImage()` & `getCroppedImg()` [Frontend - cropImage.js]: Utility functions relying on HTML5 `<canvas>` to programmatically crop a user's image entirely in the browser before upload.
+
+=========================================
+4. PROBLEMS FACED & SOLUTIONS
+=========================================
+1. Model Version Incompatibility: 
+   - Problem: Upgrading Python environments occasionally broke the TensorFlow model loading due to changes in NumPy (`np.object` deprecation).
+   - Solution: We patched `numpy` dynamically at runtime in `app.py` (`np.object = object`) to ensure legacy Keras models could still deserialize successfully without retraining.
+
+2. React Build Failures & Linting:
+   - Problem: The Vite compiler vigorously rejected builds due to unused variables and fast-refresh export errors in the image cropping utility components.
+   - Solution: Conducted a targeted cleanup, removing dead code (`dataURLtoBlob`, unused React imports) to satisfy ESLint and allow production builds.
+
+3. Frontend-Backend CORS & Authentication:
+   - Problem: Local dev servers running on different ports (Frontend on 5173, Admin on 5174, Flask on 5000) struggled to communicate or share auth tokens due to Cross-Origin Resource Sharing restrictions.
+   - Solution: Configured Flask-CORS explicitly and standardized the Authorization headers, utilizing local storage carefully across the distinct React apps.
+
+4. Terminal Clutter & Workflow:
+   - Problem: Running the DB, backend, frontend, and admin panel simultaneously required manually opening up to 4 terminal windows every session.
+   - Solution: Wrote a `start_app.bat` script using PowerShell commands to automate the environment activation and boot all requisite servers simultaneously in the background.

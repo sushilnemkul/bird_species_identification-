@@ -8,11 +8,20 @@ import jwt
 import datetime
 import tensorflow as tf
 import numpy as np
+
+# Compatibility patch for NumPy > 1.24 missing aliases
+np.object = object
+np.bool = bool
+np.int = int
+np.float = float
+np.typeDict = np.sctypeDict
+
 from PIL import Image
 from dotenv import load_dotenv
 
 from bird_info import get_bird_info
 from models import db, User, BirdSighting, Bird, BirdImage
+from sqlalchemy import text
 
 # Load environment variables
 env_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -167,6 +176,11 @@ def login():
         user = User.query.filter_by(email=data.get('email')).first()
         
         if user and check_password_hash(user.password_hash, data.get('password')):
+            # Check if user is suspended
+            if user.is_suspended:
+                logger.warning(f"Suspended user attempted login: {user.email}")
+                return jsonify({'error': 'Your account has been suspended. Please contact support.'}), 403
+
             logger.info(f"User logged in: {user.email}")
             
             # Generate JWT Token (payload must be simple JSON serializable objects)
@@ -792,6 +806,79 @@ def get_analytics():
     except Exception as e:
         logger.error(f"Error fetching analytics: {e}")
         return jsonify({'error': 'Failed to fetch analytics'}), 500
+
+
+@app.route('/api/admin/users/<int:user_id>/suspend', methods=['PATCH'])
+def suspend_user(user_id):
+    """Suspend a user account."""
+    try:
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        # Prevent suspending admin
+        if user.role == 'admin':
+             return jsonify({'error': 'Cannot suspend an admin user'}), 403
+
+        user.is_suspended = True
+        db.session.commit()
+        logger.info(f"User {user_id} suspended by admin")
+        return jsonify({'message': 'User suspended successfully'}), 200
+    except Exception as e:
+        logger.error(f"Error suspending user: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to suspend user'}), 500
+
+@app.route('/api/admin/users/<int:user_id>/unsuspend', methods=['PATCH'])
+def unsuspend_user(user_id):
+    """Unsuspend a user account."""
+    try:
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        user.is_suspended = False
+        db.session.commit()
+        logger.info(f"User {user_id} unsuspended by admin")
+        return jsonify({'message': 'User unsuspended successfully'}), 200
+    except Exception as e:
+        logger.error(f"Error unsuspending user: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to unsuspend user'}), 500
+
+@app.route('/api/admin/users/<int:user_id>/flag', methods=['PATCH'])
+def flag_user(user_id):
+    """Flag a user account."""
+    try:
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        user.is_flagged = True
+        db.session.commit()
+        logger.info(f"User {user_id} flagged by admin")
+        return jsonify({'message': 'User flagged successfully'}), 200
+    except Exception as e:
+        logger.error(f"Error flagging user: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to flag user'}), 500
+
+@app.route('/api/admin/users/<int:user_id>/unflag', methods=['PATCH'])
+def unflag_user(user_id):
+    """Unflag a user account."""
+    try:
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        user.is_flagged = False
+        db.session.commit()
+        logger.info(f"User {user_id} unflagged by admin")
+        return jsonify({'message': 'User unflagged successfully'}), 200
+    except Exception as e:
+        logger.error(f"Error unflagging user: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to unflag user'}), 500
 
 
 if __name__ == '__main__':

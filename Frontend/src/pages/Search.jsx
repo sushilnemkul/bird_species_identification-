@@ -8,6 +8,7 @@ import { useBird } from '../context/BirdContext';
 import { FaSearch, FaSpinner, FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { SearchSkeleton } from '../components/LoadingSkeleton';
+import RegionPieChart from '../components/RegionPieChart';
 
 const Search = () => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -66,6 +67,17 @@ const Search = () => {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-lg">
+                <div className="mb-6 bg-blue-50 border border-blue-100 p-5 rounded-xl">
+                    <h3 className="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                        <FaSearch className="text-blue-500 text-sm" /> Tips for Best Results
+                    </h3>
+                    <ul className="list-disc list-inside text-sm text-blue-700/80 space-y-1.5 ml-1">
+                        <li><strong>Format & Size:</strong> JPG or PNG, maximum 5MB.</li>
+                        <li><strong>Clarity:</strong> Ensure the bird is in clear focus with good lighting.</li>
+                        <li><strong>Subject:</strong> The bird should be clearly visible, ideally occupying a large portion of the photo.</li>
+                    </ul>
+                </div>
+
                 <ImageUpload onImageSelect={handleImageSelect} />
                 
                 <div className="mt-8 flex justify-center">
@@ -90,11 +102,80 @@ const Search = () => {
             </div>
 
             {result && (
-                <div className="animate-fade-in-up">
-                    <h2 className="text-2xl font-bold mb-6 text-center text-dark">Result</h2>
+                <div className="animate-fade-in-up space-y-8">
+                    <h2 className="text-2xl font-bold mb-2 text-center text-dark">Result</h2>
                     <div className="max-w-md mx-auto">
                         <BirdCard bird={result} showConfidence={true} />
                     </div>
+
+                    {/* Identification Basis Section */}
+                    {result.details && result.details.image && (
+                        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mt-8">
+                            <h3 className="text-xl font-bold mb-4 text-dark flex items-center gap-2">
+                                <FaSearch className="text-primary" /> Basis of Identification & Ecology
+                            </h3>
+                            
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
+                                <div>
+                                    <p className="text-gray-600 mb-6 text-sm">
+                                        The AI matched your photo against our database of Nepal bird species based on key visual markers such as coloration, beak shape, and body structure.
+                                    </p>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                        {/* Uploaded Crop */}
+                                        <div className="space-y-2 text-center">
+                                            <div className="h-40 rounded-xl overflow-hidden border border-gray-200">
+                                                <img src={result.imageUrl} alt="Your upload" className="w-full h-full object-contain bg-gray-50" />
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Your Image</span>
+                                        </div>
+                                        
+                                        {/* Reference Default Image */}
+                                        <div className="space-y-2 text-center">
+                                            <div className="h-40 rounded-xl overflow-hidden border border-gray-200">
+                                                <img src={result.details.image} alt="Reference species" className="w-full h-full object-cover bg-gray-50" />
+                                            </div>
+                                            <span className="text-xs font-bold text-green-700 bg-green-100 px-3 py-1 rounded-full">Reference ({result.commonName})</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10">
+                                        <h4 className="font-bold text-sm text-dark mb-1">Key Features Identified:</h4>
+                                        <p className="text-sm text-gray-700 italic">
+                                            "{result.description}"
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Geographic Distribution Chart */}
+                                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col">
+                                    <h4 className="font-bold text-sm text-dark mb-2 text-center">Distribution Across Nepal Regions</h4>
+                                    <div className="flex-1 min-h-[250px] flex items-center justify-center">
+                                        <RegionPieChart hotspotsString={result.details.hotspots} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Multiple Reference Images Gallery */}
+                    {result.details && result.details.images && result.details.images.length > 1 && (
+                        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                            <h3 className="text-xl font-bold mb-4 text-dark">Other References of {result.commonName}</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {result.details.images
+                                    // Optionally filter out the main image if we want to avoid duplicate rendering,
+                                    // or just display all of them in the gallery block. Let's filter out the primary image.
+                                    .filter(img => img !== result.details.image)
+                                    .map((img, idx) => (
+                                    <div key={idx} className="h-32 md:h-40 rounded-xl overflow-hidden shadow border border-gray-200 cursor-pointer transition-transform hover:scale-105">
+                                        <img src={img} alt={`Reference ${idx + 1}`} className="w-full h-full object-cover" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                      {!user && (
                         <div className="mt-8 text-center p-6 bg-blue-50 rounded-xl border border-blue-100">
                             <p className="text-blue-800 mb-4">Want to save your discoveries?</p>
