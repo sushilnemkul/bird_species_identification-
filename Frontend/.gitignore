@@ -30,3 +30,9 @@ __pycache__/
 *.keras
 *.iso
 dataset/
+
+.venv/
+venv/
+node_modules/
+*.iso
+__pycache__/

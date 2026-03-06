@@ -23,3 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 *.iso
+
+.venv/
+venv/
+node_modules/
+*.iso
+__pycache__/
