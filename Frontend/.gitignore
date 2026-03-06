@@ -36,3 +36,22 @@ venv/
 node_modules/
 *.iso
 __pycache__/
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# ML datasets
+Backend/dataset/
+
+# uploads and temporary files
+Backend/uploads/
+
+# environment variables
+.env
+
+Backend/saved_model/
