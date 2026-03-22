@@ -11,7 +11,15 @@ export default {
         secondary: '#97BC62', // Sage Green
         accent: '#D4A373', // Earthy Brown
         dark: '#1F2937',
-        light: '#F3F4F6'
+        light: '#F9FAFB',
+        white: '#FFFFFF',
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        border: "hsl(var(--border))",
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
       }
     },
   },

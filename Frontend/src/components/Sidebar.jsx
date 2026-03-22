@@ -26,7 +26,7 @@ const Sidebar = () => {
         <div className="h-screen w-64 bg-dark text-white fixed left-0 top-0 flex flex-col z-50">
             <div className="p-6 border-b border-gray-700">
                 <h1 className="text-2xl font-bold flex items-center gap-2">
-                    <span className="text-secondary">🐦</span> BirdID
+                    <span className="text-secondary"></span> BirdID
                 </h1>
             </div>
 

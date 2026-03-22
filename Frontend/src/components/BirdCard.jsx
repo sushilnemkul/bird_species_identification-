@@ -1,13 +1,24 @@
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FaTrashAlt } from 'react-icons/fa';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { cn } from '@/lib/utils';
 
 const BirdCard = ({ bird, showConfidence = false, timestamp = null, onDelete = null }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition hover:scale-105 hover:shadow-xl duration-300 group">
-      <div className="relative h-48 w-full">
+    <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border p-2 group transition-transform hover:scale-[1.02] duration-300">
+      <GlowingEffect 
+         spread={40}
+         glow={true}
+         disabled={false}
+         proximity={64}
+         inactiveZone={0.01}
+         borderWidth={3}
+      />
+      <div className="relative bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col">
+        <div className="relative h-48 w-full shrink-0">
         <img 
           src={bird.imageUrl || bird.image || 'https://via.placeholder.com/400x300?text=No+Image+Available'} 
           alt={bird.commonName} 
@@ -62,11 +73,12 @@ const BirdCard = ({ bird, showConfidence = false, timestamp = null, onDelete = n
         )}
         
         <button 
-            className="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white font-semibold py-2.5 rounded-xl transition-all duration-300 text-sm border border-primary/20 hover:border-primary"
+            className="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white font-semibold py-2.5 rounded-xl transition-all duration-300 text-sm border border-primary/20 hover:border-primary mt-auto"
             onClick={() => navigate('/bird-details', { state: { bird } })}
         >
             Explore Species
         </button>
+      </div>
       </div>
     </div>
   );
