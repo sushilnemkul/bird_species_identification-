@@ -1,0 +1,61 @@
+<mxfile host="Electron" modified="2024-03-26T00:00:00.000Z" agent="Mozilla/5.0" version="21.1.2" type="device">
+<diagram id="level_0" name="Level 0 DFD">
+<mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+<root>
+<mxCell id="0" />
+<mxCell id="1" parent="0" />
+<mxCell id="u0" value="User" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="50" y="200" width="100" height="150" as="geometry" /></mxCell>
+<mxCell id="a0" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="700" y="200" width="100" height="150" as="geometry" /></mxCell>
+<mxCell id="s0" value="0.0&lt;br&gt;&lt;br&gt;Bird Identification&lt;br&gt;System" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="340" y="150" width="180" height="250" as="geometry" /></mxCell>
+<mxCell id="e_us_0" value="Register / Login Request" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.05;entryX=0;entryY=0.1;" edge="1" parent="1" source="u0" target="s0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_us_1" value="Upload Image Request" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.3;" edge="1" parent="1" source="u0" target="s0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_us_2" value="History Log Request" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.45;entryX=0;entryY=0.5;" edge="1" parent="1" source="u0" target="s0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_us_3" value="Auth Success/Fail" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.65;entryX=1;entryY=0.65;" edge="1" parent="1" source="s0" target="u0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_us_4" value="Prediction Results &amp; Bird Details" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.8;entryX=1;entryY=0.85;" edge="1" parent="1" source="s0" target="u0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_us_5" value="Sighting History List" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.95;entryX=1;entryY=0.95;" edge="1" parent="1" source="s0" target="u0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_sa_0" value="Admin Login Request" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.1;entryX=1;entryY=0.15;" edge="1" parent="1" source="a0" target="s0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_sa_1" value="Suspend User / Actions" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.4;entryX=1;entryY=0.45;" edge="1" parent="1" source="a0" target="s0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_sa_2" value="Request Analytics Stats" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.75;" edge="1" parent="1" source="a0" target="s0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_sa_3" value="Admin Auth Status" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" edge="1" parent="1" source="s0" target="a0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_sa_4" value="Action Confirmed" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.6;entryX=0;entryY=0.6;" edge="1" parent="1" source="s0" target="a0"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_sa_5" value="System Stats &amp; Dash Data" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.9;entryX=0;entryY=0.9;" edge="1" parent="1" source="s0" target="a0"><mxGeometry relative="1" as="geometry" /></mxCell>
+</root></mxGraphModel></diagram>
+<diagram id="level_1" name="Level 1 DFD">
+<mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1169" math="0" shadow="0">
+<root>
+<mxCell id="0" />
+<mxCell id="1" parent="0" />
+<mxCell id="u1" value="User" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="50" y="270" width="100" height="280" as="geometry" /></mxCell>
+<mxCell id="a1" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="880" y="270" width="100" height="280" as="geometry" /></mxCell>
+<mxCell id="p1" value="1.0&lt;br&gt;&lt;br&gt;Auth &amp;amp; Registration&lt;br&gt;Process" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="350" y="80" width="160" height="110" as="geometry" /></mxCell>
+<mxCell id="p2" value="2.0&lt;br&gt;&lt;br&gt;Prediction &amp;amp; Bird Info&lt;br&gt;Process" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="350" y="270" width="160" height="110" as="geometry" /></mxCell>
+<mxCell id="p3" value="3.0&lt;br&gt;&lt;br&gt;History &amp;amp; Sighting&lt;br&gt;Process" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="350" y="460" width="160" height="110" as="geometry" /></mxCell>
+<mxCell id="p4" value="4.0&lt;br&gt;&lt;br&gt;Admin Dashboard&lt;br&gt;Process" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="350" y="650" width="160" height="110" as="geometry" /></mxCell>
+<mxCell id="d1" value="D1 : Users DB" style="shape=partialRectangle;html=1;whiteSpace=wrap;top=1;bottom=1;left=0;right=0;" vertex="1" parent="1"><mxGeometry x="680" y="115" width="110" height="40" as="geometry" /></mxCell>
+<mxCell id="d2" value="D2 : Birds Details DB" style="shape=partialRectangle;html=1;whiteSpace=wrap;top=1;bottom=1;left=0;right=0;" vertex="1" parent="1"><mxGeometry x="680" y="305" width="110" height="40" as="geometry" /></mxCell>
+<mxCell id="d3" value="D3 : Sightings History DB" style="shape=partialRectangle;html=1;whiteSpace=wrap;top=1;bottom=1;left=0;right=0;" vertex="1" parent="1"><mxGeometry x="680" y="495" width="110" height="40" as="geometry" /></mxCell>
+<mxCell id="e_1_0" value="Register/Login" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.1;entryX=0;entryY=0.25;" edge="1" parent="1" source="u1" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_1" value="Auth Confirmed" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.2;" edge="1" parent="1" source="p1" target="u1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_2" value="Image Upload" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.35;entryX=0;entryY=0.25;" edge="1" parent="1" source="u1" target="p2"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_3" value="Prediction Detail" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.45;" edge="1" parent="1" source="p2" target="u1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_4" value="Get History" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.6;entryX=0;entryY=0.25;" edge="1" parent="1" source="u1" target="p3"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_5" value="History Array" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.7;" edge="1" parent="1" source="p3" target="u1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_6" value="Admin Login" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.1;entryX=1;entryY=0.15;" edge="1" parent="1" source="a1" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_7" value="Admin Confirmed" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.6;entryX=0;entryY=0.2;" edge="1" parent="1" source="p1" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_8" value="Suspend Action" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.4;entryX=1;entryY=0.25;" edge="1" parent="1" source="a1" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_9" value="Action Resolved" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.6;" edge="1" parent="1" source="p4" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_10" value="Request Stats" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.85;entryX=1;entryY=0.75;" edge="1" parent="1" source="a1" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_11" value="Stats Render" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.8;entryX=0;entryY=0.95;" edge="1" parent="1" source="p4" target="a1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_12" value="Save/Tokenize USer" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.25;" edge="1" parent="1" source="p1" target="d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_13" value="User Verified" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.8;" edge="1" parent="1" source="d1" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_14" value="Fetch Encyclopedia" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.25;" edge="1" parent="1" source="p2" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_15" value="Bird Facts Res" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.8;" edge="1" parent="1" source="d2" target="p2"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_16" value="Record new Sighting" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.85;entryX=0.05;entryY=0;" edge="1" parent="1" source="p2" target="d3"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_17" value="Query Sightings" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.25;" edge="1" parent="1" source="p3" target="d3"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_18" value="Sightings Data" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.8;" edge="1" parent="1" source="d3" target="p3"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_19" value="Review Users" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.1;entryX=0.5;entryY=1;" edge="1" parent="1" source="p4" target="d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_20" value="User Mod OK" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.8;exitY=1;entryX=1;entryY=0.4;" edge="1" parent="1" source="d1" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_21" value="Request Analytics" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0.3;entryY=1;" edge="1" parent="1" source="p4" target="d3"><mxGeometry relative="1" as="geometry" /></mxCell>
+<mxCell id="e_1_22" value="Aggregated Stats" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.7;exitY=1;entryX=1;entryY=0.6;" edge="1" parent="1" source="d3" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+</root></mxGraphModel></diagram>
+</mxfile>

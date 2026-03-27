@@ -45,28 +45,41 @@ export const getRegionsFromHotspots = (hotspotsString) => {
     const regionCounts = {};
 
     locs.forEach(loc => {
-        // Find if any key in DB matches exactly or partially.
         let matchedRegion = REGIONS.URBAN; // Default fallback
+        let matched = false;
+
+        // Exact or substring match in DB
         for (const [key, value] of Object.entries(NEPAL_HOTSPOTS_DB)) {
             if (loc.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(loc.toLowerCase())) {
                 matchedRegion = value.region;
+                matched = true;
                 break;
             }
         }
+
+        // Smarter Fallback for custom entries (e.g. from admin panel)
+        if (!matched) {
+            const l = loc.toLowerCase();
+            if (l.includes("shivapuri") || l.includes("kathmandu") || l.includes("pokhara") || l.includes("hilly")) {
+                matchedRegion = REGIONS.HILLY;
+            } else if (l.includes("terai") || l.includes("chitwan") || l.includes("lumbini") || l.includes("koshi") || l.includes("kosi") || l.includes("bardia")) {
+                matchedRegion = REGIONS.TERAI;
+            } else if (l.includes("sagarmatha") || l.includes("langtang") || l.includes("mountain") || l.includes("himalaya")) {
+                matchedRegion = REGIONS.MOUNTAIN;
+            }
+        }
+
         regionCounts[matchedRegion] = (regionCounts[matchedRegion] || 0) + 1;
     });
 
-    // Format for Recharts { name, value }
-    const chartData = Object.keys(regionCounts).map(region => ({
+    return Object.keys(regionCounts).map(region => ({
         name: region,
         value: regionCounts[region]
     }));
-
-    return chartData;
 }
 
 /**
- * Given a comma separated string of hotspots from the API, return lat/lng markers for react-google-maps/api
+ * Given a comma separated string of hotspots from the API, return lat/lng markers for react-leaflet
  */
 export const getCoordinatesFromHotspots = (hotspotsString) => {
     if (!hotspotsString || hotspotsString === "Unknown") return [];
@@ -75,16 +88,40 @@ export const getCoordinatesFromHotspots = (hotspotsString) => {
     const markers = [];
 
     locs.forEach(loc => {
-        // Find if any key in DB matches.
+        let matched = false;
+        // Exact or substring match in DB
         for (const [key, value] of Object.entries(NEPAL_HOTSPOTS_DB)) {
             if (loc.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(loc.toLowerCase())) {
                 markers.push({
-                    name: key, // Use the proper DB name for label
+                    name: loc, // Provide the actual string so it looks natural in UI
                     lat: value.lat,
                     lng: value.lng,
                     region: value.region
                 });
+                matched = true;
                 break;
+            }
+        }
+
+        // Smarter Fallback for custom hotspot strings not hardcoded in DB
+        if (!matched) {
+            const l = loc.toLowerCase();
+            if (l.includes("shivapuri")) {
+                markers.push({ name: loc, lat: 27.8000, lng: 85.3833, region: REGIONS.HILLY });
+            } else if (l.includes("terai") || l.includes("lowlands")) {
+                markers.push({ name: loc, lat: 27.0000, lng: 85.0000, region: REGIONS.TERAI });
+            } else if (l.includes("kathmandu") || l.includes("valley")) {
+                markers.push({ name: loc, lat: 27.7172, lng: 85.3240, region: REGIONS.HILLY });
+            } else if (l.includes("chitwan") || l.includes("national park")) { // Fallback national park usually Chitwan/Bardia
+                markers.push({ name: loc, lat: 27.5341, lng: 84.4525, region: REGIONS.TERAI });
+            } else if (l.includes("sagarmatha") || l.includes("mountain")) {
+                markers.push({ name: loc, lat: 27.9333, lng: 86.7333, region: REGIONS.MOUNTAIN });
+            } else if (l.includes("pokhara")) {
+                markers.push({ name: loc, lat: 28.2096, lng: 83.9856, region: REGIONS.HILLY });
+            } else if (l.includes("koshi") || l.includes("kosi")) {
+                markers.push({ name: loc, lat: 26.6333, lng: 86.9667, region: REGIONS.TERAI });
+            } else if (l.includes("bardia")) {
+                markers.push({ name: loc, lat: 28.4600, lng: 81.3361, region: REGIONS.TERAI });
             }
         }
     });
