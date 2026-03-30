@@ -106,6 +106,7 @@ const Users = () => {
                                 <th className="p-4 text-gray-500 font-medium text-sm">Email</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Role</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Status</th>
+                                <th className="p-4 text-gray-500 font-medium text-sm">Failed Uploads</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Joined Date</th>
                                 <th className="p-4 text-gray-500 font-medium text-sm">Actions</th>
                             </tr>
@@ -148,6 +149,11 @@ const Users = () => {
                                                 </span>
                                             )}
                                         </div>
+                                    </td>
+                                    <td className="p-4">
+                                        <span className={`font-medium ${user.failed_bird_uploads >= 5 ? 'text-red-600' : user.failed_bird_uploads > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
+                                            {user.failed_bird_uploads || 0}
+                                        </span>
                                     </td>
                                     <td className="p-4 text-gray-500 text-sm">
                                         {new Date(user.created_at).toLocaleDateString()}

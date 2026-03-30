@@ -18,6 +18,7 @@ np.typeDict = np.sctypeDict
 
 from PIL import Image
 from dotenv import load_dotenv
+from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input, decode_predictions
 
 from bird_info import get_bird_info
 from models import db, User, BirdSighting, Bird, BirdImage
@@ -120,6 +121,63 @@ def load_inference_model():
 
 # Load model on startup
 load_inference_model()
+
+# Global verification model
+verification_model = None
+
+def load_verification_model():
+    """Load the pre-trained ImageNet model for bird verification."""
+    global verification_model
+    if verification_model is None:
+        try:
+            logger.info("Loading bird verification model (MobileNetV2)...")
+            # We use MobileNetV2 for fast inference
+            verification_model = MobileNetV2(weights='imagenet')
+            logger.info("✅ Verification model loaded successfully!")
+        except Exception as e:
+            logger.error(f"❌ Error loading verification model: {e}")
+
+def is_it_a_bird(img):
+    """
+    Check if the image contains a bird using a pre-trained ImageNet model.
+    Checks for common bird features like beak, eyes, feathers via class labels.
+    """
+    try:
+        if verification_model is None:
+            load_verification_model()
+        
+        if verification_model is None:
+            return True, "system_error" # Fallback if model fails to load
+
+        # Clone and resize for MobileNetV2 (224x224)
+        img_check = img.copy().resize((224, 224))
+        x = tf.keras.utils.img_to_array(img_check)
+        x = np.expand_dims(x, axis=0)
+        x = preprocess_input(x)
+        
+        preds = verification_model.predict(x, verbose=0)
+        decoded = decode_predictions(preds, top=5)[0]
+        
+        # Broad list of bird-related ImageNet keywords
+        bird_keywords = [
+            'bird', 'finch', 'kingfisher', 'robin', 'sparrow', 'owl', 'hawk', 'eagle', 'vulture', 
+            'parrot', 'cockatoo', 'macaw', 'toucan', 'hummingbird', 'pigeon', 'jay', 'magpie',
+            'crow', 'swan', 'goose', 'duck', 'penguin', 'ostrich', 'peacock', 'crane', 'stork',
+            'kite', 'beeeater', 'bee_eater', 'hornbill', 'woodpecker', 'flamingos', 'albatross'
+        ]
+        
+        for _, label, score in decoded:
+            label_lower = label.lower().replace('_', '')
+            if any(kw in label_lower for kw in bird_keywords):
+                if score > 0.05: # Reasonable confidence threshold
+                    logger.info(f"Verification: Bird detected ({label}: {score:.2%})")
+                    return True, label
+        
+        logger.warning(f"Verification: No bird detected. Top guess: {decoded[0][1]} ({decoded[0][2]:.2%})")
+        return False, decoded[0][1]
+    except Exception as e:
+        logger.error(f"Error in bird verification: {e}")
+        return True, "error"
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -457,6 +515,17 @@ def predict():
         if not model:
             return jsonify({"error": "Model not available. Please train the model first."}), 503
 
+    # Check if user is suspended or authenticated
+    user_id_raw = request.form.get('user_id')
+    user = None
+    if user_id_raw:
+        try:
+            user = db.session.get(User, int(user_id_raw))
+            if user and user.is_suspended:
+                return jsonify({"error": "Your account is suspended due to multiple invalid uploads. Please contact admin."}), 403
+        except:
+            pass
+
     if 'image' not in request.files:
         return jsonify({"error": "Please upload an image file"}), 400
     
@@ -496,9 +565,34 @@ def predict():
         img_array = tf.expand_dims(img_array, 0)
         
         logger.info(f"Processed image shape: {img_array.shape}, dtype: {img_array.dtype}")
-        logger.info(f"Image pixel range: [{tf.reduce_min(img_array):.3f}, {tf.reduce_max(img_array):.3f}]")
         
-        # Predict
+        # Step 1: Verification - Is it actually a bird?
+        is_bird, top_guess = is_it_a_bird(img)
+        
+        if not is_bird:
+            # Penalty logic
+            warning_msg = "No bird detected in the image. Please upload a clear image of a bird showing its beak, eyes, or feathers."
+            
+            if user:
+                user.failed_bird_uploads += 1
+                remaining = 5 - user.failed_bird_uploads
+                
+                if user.failed_bird_uploads >= 5:
+                    user.is_flagged = True
+                    warning_msg += " Your account has been flagged for multiple non-bird uploads."
+                else:
+                    warning_msg += f" Warning: {remaining} attempts remaining before your account is flagged."
+                
+                db.session.commit()
+                logger.warning(f"User {user.id} failed bird verification. Fail count: {user.failed_bird_uploads}")
+
+            return jsonify({
+                "error": warning_msg,
+                "detected_as": top_guess,
+                "is_bird": False
+            }), 400
+
+        # Step 2: Identification - Which bird is it?
         logger.info("Processing bird identification request")
         predictions = model.predict(img_array, verbose=0)
         

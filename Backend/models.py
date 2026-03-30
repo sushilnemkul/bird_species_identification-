@@ -13,6 +13,7 @@ class User(db.Model):
     role = db.Column(db.String(20), default='user')  # 'user' or 'admin'
     is_suspended = db.Column(db.Boolean, default=False)
     is_flagged = db.Column(db.Boolean, default=False)
+    failed_bird_uploads = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     sightings = db.relationship('BirdSighting', backref='user', lazy=True, cascade="all, delete-orphan")
@@ -25,6 +26,7 @@ class User(db.Model):
             'role': self.role,
             'is_suspended': self.is_suspended,
             'is_flagged': self.is_flagged,
+            'failed_bird_uploads': self.failed_bird_uploads,
             'avatar': f"https://ui-avatars.com/api/?name={self.username}&background=random",
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

@@ -24,7 +24,23 @@ This document contains the final project documentation, including comprehensive 
 
 ---
 
-## 1. Unit Testing Cases
+## Chapter 1: Introduction
+
+### 1.1 Background
+The rich avian biodiversity of Nepal presents a unique opportunity and challenge for nature enthusiasts, students, and ornithologists. Identifying birds from field observations is a complex task that typically requires years of experience and reliance on extensive field guides. With the rapid advancement of artificial intelligence and computer vision techniques, an automated approach to species classification is now heavily viable.
+
+### 1.2 Problem Statement
+Existing bird identification applications often lack localized data specific to native Nepalese bird species or fail to provide accurate geographical hotspot contexts. Furthermore, many models act solely as static classifiers without offering a comprehensive platform for users to track their personal sightings or for administrators to manage a community dataset.
+
+### 1.3 Objectives
+*   To develop a highly accurate deep learning model (CNN) capable of classifying bird species from a single image.
+*   To construct a responsive, full-stack web application linking a React frontend to a Flask REST API backend.
+*   To provide localized, interactive geographic hotspot mapping (utilizing Leaflet) and rich encyclopedic databases for each identified bird.
+*   To implement a secure, centralized administrative dashboard for monitoring system analytics and active user activity.
+
+---
+
+## Chapter 2: Unit Testing Cases
 
 Unit testing focuses on testing individual components and functions in isolation.
 
@@ -57,7 +73,7 @@ Unit testing focuses on testing individual components and functions in isolation
 
 ---
 
-## 2. System Testing Cases
+## Chapter 3: System Testing Cases
 
 System testing evaluates the complete, integrated application to verify that it meets the specified requirements.
 
@@ -79,7 +95,7 @@ System testing evaluates the complete, integrated application to verify that it 
 
 ---
 
-## 3. Algorithm Description
+## Chapter 4: Algorithm Description
 
 ### 3.1 Overview
 The core intelligence of the application is powered by a custom **Convolutional Neural Network (CNN)** built with the **TensorFlow/Keras** framework. CNNs are highly specialized for computer vision tasks as they can autonomously learn spatial hierarchies of features from images (like edges, textures, and ultimately shapes like beaks and wings).
