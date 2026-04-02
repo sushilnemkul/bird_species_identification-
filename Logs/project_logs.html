@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Identification System - Project Log Sheets</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            --primary-bg: #ffffff;
+            --border-color: #000000;
+            --text-main: #1a1a1a;
+            --text-muted: #4b5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 20mm auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            page-break-after: always;
+        }
+
+        @media print {
+            body { background: none; }
+            .page-container {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logos-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-img {
+            height: 80px;
+            width: auto;
+        }
+
+        h1 { margin: 5px 0; font-size: 22pt; font-weight: bold; }
+        h2 { margin: 5px 0; font-size: 16pt; font-weight: normal; }
+        h3 { margin: 5px 0; font-size: 14pt; }
+
+        .info-section {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 12pt;
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .log-table th, .log-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .table-header {
+            background-color: #f9fafb;
+            text-align: center !important;
+            font-weight: bold;
+            font-size: 13pt;
+        }
+
+        .field-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .field-content {
+            display: block;
+            min-height: 40px;
+            white-space: pre-line;
+        }
+
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .flex-row > div {
+            width: 33%;
+        }
+
+        .footer-signature {
+            position: absolute;
+            bottom: 40mm;
+            left: 20mm;
+            right: 20mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .signature-line {
+            width: 250px;
+            border-top: 1px solid black;
+            margin-top: 50px;
+            padding-top: 10px;
+            font-weight: bold;
+        }
+
+        .sub-text {
+            font-size: 10pt;
+            color: var(--text-muted);
+        }
+
+        .achievements-list, .problems-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .achievements-list li, .problems-list li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- TEMPLATE SCRIPT TO GENERATE 10 SHEETS -->
+<div id="logs-root"></div>
+
+<script>
+    const projectData = {
+        student: "Sushil Nemkul",
+        regNo: "6-2-469-20-2022",
+        supervisor: "Er. Abhishek Khanal",
+        college: "DAV College",
+        project: "Bird Species Identification"
+    };
+
+    const logs = [
+        {
+            no: 1,
+            date: "Jan 15, 2026",
+            start: "10:00 AM",
+            end: "11:30 AM",
+            topic: "Project Topic Finalization & Requirement Analysis",
+            achievements: [
+                "Finalized 'Bird Species Identification System' as the core project topic.",
+                "Defined target audience: Ornithologists and bird enthusiasts in Nepal.",
+                "Established primary tech stack: Python/Flask, React/Vite, and TensorFlow."
+            ],
+            problems: [
+                "Defining constraints for the initial bird species dataset to maintain accuracy while keeping training times manageable."
+            ],
+            tasks: "Conduct literature review on CNN architectures and search for regional bird datasets."
+        },
+        {
+            no: 2,
+            date: "Jan 22, 2026",
+            start: "11:00 AM",
+            end: "12:30 PM",
+            topic: "Literature Review & Dataset Acquisition",
+            achievements: [
+                "Studied VGG16, ResNet50, and MobileNet architectures for image classification.",
+                "Identified key Nepalese species for data seeding (Himalayan Monal, Spiny Babbler, etc.).",
+                "Created initial PostgreSQL schema for species information."
+            ],
+            problems: [
+                "Discovered high variance in image quality from public web sources; requiring standardization scripts."
+            ],
+            tasks: "Set up the Python development environment and implement basic image normalization scripts."
+        },
+        {
+            no: 3,
+            date: "Jan 29, 2026",
+            start: "10:30 AM",
+            end: "1:00 PM",
+            topic: "CNN Architecture Design & Environment Setup",
+            achievements: [
+                "Configured local TensorFlow environment with GPU acceleration.",
+                "Developed a custom CNN blueprint with 4 convolutional layers, MaxPooling, and Dropout.",
+                "Ran initial training experiments on a 10-species subset."
+            ],
+            problems: [
+                "Encountered extreme overfitting beyond 20 epochs; need to implement real-time data augmentation."
+            ],
+            tasks: "Integrate 'ImageDataGenerator' for augmentation and optimize hyperparameters."
+        },
+        {
+            no: 4,
+            date: "Feb 5, 2026",
+            start: "09:00 AM",
+            end: "11:00 AM",
+            topic: "Backend API Skeleton & JWT Authentication",
+            achievements: [
+                "Initialized Flask application and connected to PostgreSQL database.",
+                "Implemented secure JWT-based authentication for user registration and login.",
+                "Developed the core Image Upload and Predict API endpoints."
+            ],
+            problems: [
+                "Flask-CORS configuration issues preventing communication with the React local dev server."
+            ],
+            tasks: "Refine predictability logic to handle non-bird images gracefully (thresholding)."
+        },
+        {
+            no: 5,
+            date: "Feb 12, 2026",
+            start: "1:00 PM",
+            end: "3:30 PM",
+            topic: "Frontend Development & UI Design",
+            achievements: [
+                "Scaffolded React application using Vite and established a TailwindCSS design system.",
+                "Built a drag-and-drop image upload portal with progress indicators.",
+                "Integrated prediction results display showing biological facts from the DB."
+            ],
+            problems: [
+                "Complexity in handling 'multipart/form-data' binary streams via Axios in React."
+            ],
+            tasks: "Implement user authentication state management using Context API."
+        },
+        {
+            no: 6,
+            date: "Feb 19, 2026",
+            start: "10:00 AM",
+            end: "12:00 PM",
+            topic: "Admin Portal Separation & Analytics",
+            achievements: [
+                "Refactored architecture to completely separate the Admin portal into a standalone app.",
+                "Developed User Management dashboard with 'Suspend' and 'Flag Spam' features.",
+                "Added system analytics view to track total predictions and active users."
+            ],
+            problems: [
+                "Syncing authentication tokens across two separate domains/ports in the local environment."
+            ],
+            tasks: "Develop image cropping utility to improve prediction accuracy."
+        },
+        {
+            no: 7,
+            date: "Feb 26, 2026",
+            start: "11:30 AM",
+            end: "2:00 PM",
+            topic: "Advanced UI Features: Cropping & Comparisons",
+            achievements: [
+                "Integrated 'react-easy-crop' for precision bird selection before upload.",
+                "Standardized image preprocessing to 224x224 pixels on the client side.",
+                "Built side-by-side comparison screen between user upload and reference gallery."
+            ],
+            problems: [
+                "Canvas-based cropping utility causing memory leaks during rapid re-cropping."
+            ],
+            tasks: "Research and implement geographic mapping for species hotspots."
+        },
+        {
+            no: 8,
+            date: "Mar 5, 2026",
+            start: "10:00 AM",
+            end: "1:30 PM",
+            topic: "Geographic Visualization & Regional Mapping",
+            achievements: [
+                "Integrated '@react-google-maps/api' to visualize sighting hotspots in Nepal.",
+                "Extracted and mapped habitat data to ecological regions (Terai, Hilly, Mountain).",
+                "Built interactive distribution charts using Recharts library."
+            ],
+            problems: [
+                "Initial mapping function failed to parse legacy comma-separated location strings in DB."
+            ],
+            tasks: "Conduct security auditing and tighten API endpoint permissions."
+        },
+        {
+            no: 9,
+            date: "Mar 12, 2026",
+            start: "09:30 AM",
+            end: "11:30 AM",
+            topic: "Security Hardening & Troubleshooting",
+            achievements: [
+                "Fixed a critical route vulnerability allowing unauthenticated access to user history.",
+                "Optimized database indexing for faster species lookup during prediction.",
+                "Automated the startup process with a PowerShell-based '.bat' script."
+            ],
+            problems: [
+                "Database schema mismatch error (UndefinedColumn: failed_bird_uploads) detected after latest migration."
+            ],
+            tasks: "Finalize system testing and prepare project documentation."
+        },
+        {
+            no: 10,
+            date: "Mar 26, 2026",
+            start: "10:00 AM",
+            end: "1:00 PM",
+            topic: "Final Integration, Debugging & Documentation",
+            achievements: [
+                "Patched NumPy 'np.object' deprecation issue ensuring Keras model compatibility.",
+                "Completed 'PROJECT_DOCUMENTATION.md' with detailed architectural chapters.",
+                "Performed comprehensive system verification and integration testing."
+            ],
+            problems: [
+                "Occasional latency spikes in the predictions; solved by optimizing image tensor preprocessing speed."
+            ],
+            tasks: "Prepare for final Project Defense/Presentation."
+        }
+    ];
+
+    const container = document.getElementById('logs-root');
+
+    logs.forEach(log => {
+        const page = document.createElement('div');
+        page.className = 'page-container';
+        
+        page.innerHTML = `
+            <header>
+                <div class="logos-row">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Tribhuvan_University_logo.png" alt="TU Logo" class="logo-img" style="opacity: 0.1">
+                    <img src="https://dav.edu.np/images/dav-logo.png" alt="DAV Logo" class="logo-img" style="opacity: 0.1">
+                </div>
+                <h1>Supervisor's Log Sheet</h1>
+                <h2>Project Log Sheet</h2>
+                <h3>${projectData.project}</h3>
+            </header>
+
+            <div class="info-section">
+                <strong>Supervisor name:</strong> ${projectData.supervisor}<br>
+                <strong>Name:</strong> ${projectData.student} [TU Reg. No: ${projectData.regNo}]
+            </div>
+
+            <table class="log-table">
+                <tr>
+                    <td colspan="2" class="table-header">Logbook Entry Sheet</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="field-label">Meeting No:</span>
+                        <span class="field-content">${log.no}</span>
+                    </td>
+                    <td>
+                        <span class="field-label">Date:</span>
+                        <span class="field-content">${log.date}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="field-label">Start Time:</span>
+                        <span class="field-content">${log.start}</span>
+                    </td>
+                    <td>
+                        <span class="field-label">End Time:</span>
+                        <span class="field-content">${log.end}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span class="field-label">Meeting Topic:</span>
+                        <span class="field-content">${log.topic}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span class="field-label">Achievements:</span>
+                        <ul class="achievements-list">
+                            ${log.achievements.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span class="field-label">Problems:</span>
+                        <ul class="problems-list">
+                            ${log.problems.map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span class="field-label">Tasks for next meeting:</span>
+                        <span class="field-content">${log.tasks}</span>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="footer-signature">
+                <div style="margin-bottom: 60px;">_______________________</div>
+                <div class="signature-line">${projectData.supervisor}</div>
+                <div>Supervisor</div>
+                <div class="sub-text">Lecturer, ${projectData.college}</div>
+            </div>
+        `;
+        
+        container.appendChild(page);
+    });
+</script>
+
+</body>
+</html>
